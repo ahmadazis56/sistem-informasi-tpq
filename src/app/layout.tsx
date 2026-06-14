@@ -10,6 +10,9 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Darul Ikhlas - Sistem Manajemen TPQ",
   description: "Sistem Manajemen Pembayaran SPP dan Absensi TPQ Darul Ikhlas",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({

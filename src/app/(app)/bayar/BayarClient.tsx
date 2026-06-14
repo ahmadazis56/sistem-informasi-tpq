@@ -24,6 +24,17 @@ export default function BayarClient({ students, recentPayments }: { students: an
   const [loadingReport, setLoadingReport] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [actionLoading, setActionLoading] = useState<Record<number, boolean>>({});
+  const [statusFilter, setStatusFilter] = useState<'semua' | 'lunas' | 'belum'>('semua');
+
+  // Filter and search logic
+  const filteredData = reportData.filter(row => {
+    const matchesSearch = row.studentName.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = 
+      statusFilter === 'semua' || 
+      (statusFilter === 'lunas' && row.status === 'Lunas') ||
+      (statusFilter === 'belum' && row.status === 'Belum Bayar');
+    return matchesSearch && matchesStatus;
+  });
 
   const fetchReport = async (type: string, month: string, year: number) => {
     setLoadingReport(true);
@@ -90,6 +101,54 @@ export default function BayarClient({ students, recentPayments }: { students: an
       }, 1000);
     }
     setActionLoading(prev => ({ ...prev, [studentId]: false }));
+  };
+
+  const handleExportExcel = () => {
+    const headers = ['No', 'Nama Santri', 'Kelas', 'Status', 'Nominal', 'Tanggal Pembayaran'];
+    
+    const rows = filteredData.map((row, index) => {
+      const formattedDate = row.status === 'Lunas' && row.paymentDate 
+        ? new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(row.paymentDate)) 
+        : '-';
+      
+      return [
+        index + 1,
+        `"${row.studentName.replace(/"/g, '""')}"`,
+        `"${row.studentClass.replace(/"/g, '""')}"`,
+        `"${row.status}"`,
+        row.status === 'Lunas' ? row.amount : 0,
+        `"${formattedDate}"`
+      ];
+    });
+
+    const title = `LAPORAN STATUS PEMBAYARAN - TPQ DARUL IKHLAS`;
+    const period = filterType === 'SPP' ? `${filterMonth} ${filterYear}` : filterYear;
+    const subtitle = `Tipe: ${filterType === 'SPP' ? 'SPP Bulanan' : 'Daftar Ulang Tahunan'} (${period})`;
+    const exportTime = `Tanggal Unduh: ${new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date())}`;
+    
+    const csvContent = [
+      'sep=,', // Tell Excel to use comma delimiter
+      `"${title}"`,
+      `"${subtitle}"`,
+      `"${exportTime}"`,
+      '', // empty separator row
+      headers.join(','),
+      ...rows.map(r => r.join(','))
+    ].join('\n');
+
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+    
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    
+    const fileName = `Laporan_Pembayaran_${filterType}_${period.toString().replace(/\s+/g, '_')}.csv`;
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -241,7 +300,9 @@ export default function BayarClient({ students, recentPayments }: { students: an
           <div className="flex flex-wrap gap-3 w-full md:w-auto">
             <select 
               value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
+              onChange={(e) => {
+                setFilterType(e.target.value);
+              }}
               className="px-4 py-2 rounded-xl border border-gray-200 text-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white text-sm"
             >
               <option value="SPP">SPP Bulanan</option>
@@ -265,18 +326,38 @@ export default function BayarClient({ students, recentPayments }: { students: an
             >
               {years.map(y => <option key={y} value={y}>{y}</option>)}
             </select>
+
+            <select 
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as any)}
+              className="px-4 py-2 rounded-xl border border-gray-200 text-slate-900 focus:border-primary focus:ring-1 focus:ring-primary outline-none bg-white text-sm"
+            >
+              <option value="semua">Semua Status</option>
+              <option value="lunas">Lunas (Sudah Bayar)</option>
+              <option value="belum">Belum Bayar</option>
+            </select>
           </div>
 
-          {/* Search box */}
-          <div className="relative w-full md:w-64">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-sm">search</span>
-            <input 
-              type="text" 
-              placeholder="Cari nama santri..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 rounded-xl border border-gray-200 text-slate-900 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-            />
+          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            {/* Search box */}
+            <div className="relative w-full sm:w-64">
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-sm">search</span>
+              <input 
+                type="text" 
+                placeholder="Cari nama santri..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 rounded-xl border border-gray-200 text-slate-900 text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+              />
+            </div>
+            {/* Export Excel Button */}
+            <button
+              onClick={handleExportExcel}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-sm font-medium inline-flex items-center justify-center gap-1.5 transition-colors shadow-sm cursor-pointer whitespace-nowrap"
+            >
+              <span className="material-symbols-outlined text-lg">description</span>
+              Ekspor Excel
+            </button>
           </div>
         </div>
 
@@ -302,16 +383,14 @@ export default function BayarClient({ students, recentPayments }: { students: an
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {reportData.filter(r => r.studentName.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 ? (
+                  {filteredData.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="px-6 py-8 text-center text-secondary text-xs">
                         Tidak ada data ditemukan.
                       </td>
                     </tr>
                   ) : (
-                    reportData
-                      .filter(r => r.studentName.toLowerCase().includes(searchQuery.toLowerCase()))
-                      .map((row, idx) => (
+                    filteredData.map((row, idx) => (
                         <tr key={row.studentId} className="hover:bg-gray-50/50 transition-colors">
                           <td className="px-6 py-3 text-secondary">{idx + 1}</td>
                           <td className="px-6 py-3 font-medium text-gray-900">{row.studentName}</td>
