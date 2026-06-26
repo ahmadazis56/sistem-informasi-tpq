@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { recordPayment, getPaymentStatusReport, togglePaymentStatus } from '@/lib/actions';
 import SearchableSelect from '@/components/SearchableSelect';
+import * as XLSX from 'xlsx';
 
 function formatRupiah(amount: number) {
   return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
@@ -31,7 +32,7 @@ export default function BayarClient({ students, recentPayments }: { students: an
     const matchesSearch = row.studentName.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = 
       statusFilter === 'semua' || 
-      (statusFilter === 'lunas' && row.status === 'Lunas') ||
+      (statusFilter === 'lunas' && row.status.startsWith('Lunas')) ||
       (statusFilter === 'belum' && row.status === 'Belum Bayar');
     return matchesSearch && matchesStatus;
   });
@@ -104,51 +105,55 @@ export default function BayarClient({ students, recentPayments }: { students: an
   };
 
   const handleExportExcel = () => {
-    const headers = ['No', 'Nama Santri', 'Kelas', 'Status', 'Nominal', 'Tanggal Pembayaran'];
-    
-    const rows = filteredData.map((row, index) => {
-      const formattedDate = row.status === 'Lunas' && row.paymentDate 
-        ? new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(row.paymentDate)) 
-        : '-';
-      
-      return [
-        index + 1,
-        `"${row.studentName.replace(/"/g, '""')}"`,
-        `"${row.studentClass.replace(/"/g, '""')}"`,
-        `"${row.status}"`,
-        row.status === 'Lunas' ? row.amount : 0,
-        `"${formattedDate}"`
-      ];
-    });
-
-    const title = `LAPORAN STATUS PEMBAYARAN - TPQ DARUL IKHLAS`;
     const period = filterType === 'SPP' ? `${filterMonth} ${filterYear}` : filterYear;
+    const title = `LAPORAN STATUS PEMBAYARAN - TPQ DARUL IKHLAS`;
     const subtitle = `Tipe: ${filterType === 'SPP' ? 'SPP Bulanan' : 'Daftar Ulang Tahunan'} (${period})`;
     const exportTime = `Tanggal Unduh: ${new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date())}`;
     
-    const csvContent = [
-      'sep=,', // Tell Excel to use comma delimiter
-      `"${title}"`,
-      `"${subtitle}"`,
-      `"${exportTime}"`,
-      '', // empty separator row
-      headers.join(','),
-      ...rows.map(r => r.join(','))
-    ].join('\n');
+    const aoaData = [
+      [title],
+      [subtitle],
+      [exportTime],
+      [],
+      ['No', 'Nama Santri', 'Kelas', 'Status', 'Nominal', 'Tanggal Pembayaran']
+    ];
 
-    const BOM = '\uFEFF';
-    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
-    
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    
-    const fileName = `Laporan_Pembayaran_${filterType}_${period.toString().replace(/\s+/g, '_')}.csv`;
-    link.setAttribute('download', fileName);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    filteredData.forEach((row, index) => {
+      const formattedDate = row.paymentDate 
+        ? new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(row.paymentDate)) 
+        : '-';
+      
+      aoaData.push([
+        index + 1,
+        row.studentName,
+        row.studentClass,
+        row.status,
+        row.status.startsWith('Lunas') ? row.amount : 0,
+        formattedDate
+      ]);
+    });
+
+    const worksheet = XLSX.utils.aoa_to_sheet(aoaData);
+
+    const colWidths = [5, 25, 12, 15, 15, 20];
+    aoaData.forEach((row) => {
+      row.forEach((cellVal, colIdx) => {
+        if (cellVal !== undefined && cellVal !== null) {
+          const valStr = cellVal.toString();
+          if (valStr.length > colWidths[colIdx]) {
+            colWidths[colIdx] = valStr.length;
+          }
+        }
+      });
+    });
+
+    worksheet['!cols'] = colWidths.map(w => ({ wch: w + 3 }));
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Laporan Pembayaran');
+
+    const fileName = `Laporan_Pembayaran_${filterType}_${period.toString().replace(/\s+/g, '_')}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
   };
 
   return (
@@ -286,7 +291,7 @@ export default function BayarClient({ students, recentPayments }: { students: an
           <div className="flex gap-3">
             <span className="bg-emerald-50 text-primary border border-emerald-100 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1">
               <span className="material-symbols-outlined text-sm">check_circle</span>
-              Lunas: {reportData.filter(r => r.status === 'Lunas').length}
+              Lunas: {reportData.filter(r => r.status.startsWith('Lunas')).length}
             </span>
             <span className="bg-rose-50 text-error border border-rose-100 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1">
               <span className="material-symbols-outlined text-sm">cancel</span>
@@ -401,7 +406,7 @@ export default function BayarClient({ students, recentPayments }: { students: an
                           </td>
                           <td className="px-6 py-3">
                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                              row.status === 'Lunas' 
+                              row.status.startsWith('Lunas') 
                                 ? 'bg-green-100 text-green-700' 
                                 : 'bg-red-100 text-red-600'
                             }`}>
@@ -409,16 +414,16 @@ export default function BayarClient({ students, recentPayments }: { students: an
                             </span>
                           </td>
                           <td className="px-6 py-3 font-medium text-gray-900">
-                            {row.status === 'Lunas' ? formatRupiah(row.amount) : '-'}
+                            {row.amount > 0 ? formatRupiah(row.amount) : '-'}
                           </td>
                           <td className="px-6 py-3 text-secondary text-xs">
-                            {row.status === 'Lunas' && row.paymentDate 
+                            {row.paymentDate 
                               ? new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(row.paymentDate)) 
                               : '-'}
                             {row.paymentMonth && row.paymentMonth !== filterMonth && filterType === 'SPP' && ` (di Bulan: ${row.paymentMonth})`}
                           </td>
                           <td className="px-6 py-3 text-right">
-                            {row.status === 'Lunas' ? (
+                            {row.status.startsWith('Lunas') ? (
                               <button
                                 onClick={() => handleToggleStatus(row.studentId, 'Belum Bayar')}
                                 disabled={actionLoading[row.studentId]}

@@ -219,27 +219,62 @@ export async function saveAttendance(records: { studentId: number; date: string;
 
 export async function getDashboardStats() {
   try {
-    const totalStudents = await sql`SELECT COUNT(*) as count FROM students`;
-    const paidResult = await sql`
-      SELECT COUNT(*) as count, COALESCE(SUM(amount), 0) as total 
-      FROM spp_payments WHERE status = 'Lunas'
-    `;
-    const unpaidResult = await sql`
-      SELECT COUNT(*) as count, COALESCE(SUM(amount), 0) as total 
-      FROM spp_payments WHERE status = 'Belum Bayar'
-    `;
-    const totalPayments = await sql`SELECT COUNT(*) as count FROM spp_payments`;
+    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    const today = new Date();
+    const currentMonth = months[today.getMonth()];
+    const currentYear = today.getFullYear();
 
-    const paid = Number(paidResult.rows[0].count);
-    const total = Number(totalPayments.rows[0].count);
-    const percentage = total > 0 ? Math.round((paid / total) * 100) : 0;
+    const totalStudentsResult = await sql`SELECT COUNT(*) as count FROM students`;
+    const totalStudents = Number(totalStudentsResult.rows[0].count);
+
+    const report = await getPaymentStatusReport(currentMonth, currentYear, 'SPP');
+
+    const paidCount = report.filter(r => r.status.startsWith('Lunas')).length;
+    const unpaidCount = report.filter(r => r.status === 'Belum Bayar').length;
+    
+    // Sum only actual amounts recorded
+    const paidTotal = report.reduce((sum, r) => sum + r.amount, 0);
+
+    // Calculate unpaid total dynamically per family
+    const studentsResult = await sql`SELECT id, wali_santri_id FROM students`;
+    const studentsList = studentsResult.rows;
+
+    const families: Record<string, any[]> = {};
+    studentsList.forEach(student => {
+      const waliId = student.wali_santri_id ? student.wali_santri_id.toString() : `no-wali-${student.id}`;
+      if (!families[waliId]) {
+        families[waliId] = [];
+      }
+      families[waliId].push(student);
+    });
+
+    let unpaidTotal = 0;
+    Object.keys(families).forEach(waliId => {
+      const familyStudents = families[waliId];
+      const n = familyStudents.length;
+      let required = 50000;
+      if (n === 1 || n === 2) {
+        required = 50000;
+      } else if (n >= 3) {
+        required = 75000;
+      }
+
+      const familyStudentIds = familyStudents.map(s => s.id);
+      const familyReport = report.filter(r => familyStudentIds.includes(r.studentId));
+      const familyPaid = familyReport.reduce((sum, r) => sum + r.amount, 0);
+
+      const remaining = Math.max(0, required - familyPaid);
+      unpaidTotal += remaining;
+    });
+
+    const percentage = totalStudents > 0 ? Math.round((paidCount / totalStudents) * 100) : 0;
 
     return {
-      totalStudents: Number(totalStudents.rows[0].count),
-      paidCount: paid,
-      paidTotal: Number(paidResult.rows[0].total),
-      unpaidCount: Number(unpaidResult.rows[0].count),
-      unpaidTotal: Number(unpaidResult.rows[0].total),
+      totalStudents,
+      paidCount,
+      paidTotal,
+      unpaidCount,
+      unpaidTotal,
       percentage,
     };
   } catch (error) {
@@ -247,6 +282,7 @@ export async function getDashboardStats() {
     return { totalStudents: 0, paidCount: 0, paidTotal: 0, unpaidCount: 0, unpaidTotal: 0, percentage: 0 };
   }
 }
+
 
 export async function getPaymentsByMonth(month: string, year: number) {
   try {
@@ -314,6 +350,16 @@ export async function togglePaymentStatus(
   }
 
   try {
+    // Check sibling count to determine proper required amount
+    const studentInfo = await sql`SELECT wali_santri_id FROM students WHERE id = ${studentId}`;
+    const waliId = studentInfo.rows[0]?.wali_santri_id;
+    let siblingCount = 1;
+    if (waliId) {
+      const siblings = await sql`SELECT COUNT(*) as count FROM students WHERE wali_santri_id = ${waliId}`;
+      siblingCount = Number(siblings.rows[0]?.count || 1);
+    }
+    const finalAmount = siblingCount >= 3 ? 75000 : 50000;
+
     // Check if payment already exists
     const existing = await sql`
       SELECT id FROM spp_payments 
@@ -324,27 +370,32 @@ export async function togglePaymentStatus(
       if (existing.rows.length > 0) {
         await sql`
           UPDATE spp_payments 
-          SET amount = ${amount}, status = 'Lunas', payment_date = NOW()
+          SET amount = ${finalAmount}, status = 'Lunas', payment_date = NOW()
           WHERE student_id = ${studentId} AND month = ${month} AND year = ${year} AND payment_type = ${paymentType}
         `;
       } else {
         await sql`
           INSERT INTO spp_payments (student_id, month, year, amount, payment_date, status, payment_type)
-          VALUES (${studentId}, ${month}, ${year}, ${amount}, NOW(), 'Lunas', ${paymentType})
+          VALUES (${studentId}, ${month}, ${year}, ${finalAmount}, NOW(), 'Lunas', ${paymentType})
         `;
       }
     } else {
-      // Mark as 'Belum Bayar'
-      if (existing.rows.length > 0) {
-        await sql`
-          UPDATE spp_payments 
-          SET amount = ${amount}, status = 'Belum Bayar', payment_date = NULL
-          WHERE student_id = ${studentId} AND month = ${month} AND year = ${year} AND payment_type = ${paymentType}
-        `;
+      // Mark as 'Belum Bayar' (Cancel/Batal)
+      // Delete the payment records for the student and all their siblings for this period
+      if (waliId) {
+        const siblingsResult = await sql`SELECT id FROM students WHERE wali_santri_id = ${waliId}`;
+        const siblingIds = siblingsResult.rows.map((r: any) => r.id);
+        
+        for (const sId of siblingIds) {
+          await sql`
+            DELETE FROM spp_payments 
+            WHERE student_id = ${sId} AND month = ${month} AND year = ${year} AND payment_type = ${paymentType}
+          `;
+        }
       } else {
         await sql`
-          INSERT INTO spp_payments (student_id, month, year, amount, payment_date, status, payment_type)
-          VALUES (${studentId}, ${month}, ${year}, ${amount}, NULL, 'Belum Bayar', ${paymentType})
+          DELETE FROM spp_payments 
+          WHERE student_id = ${studentId} AND month = ${month} AND year = ${year} AND payment_type = ${paymentType}
         `;
       }
     }
@@ -357,6 +408,7 @@ export async function togglePaymentStatus(
     return { error: error.message || 'Gagal mengubah status pembayaran.' };
   }
 }
+
 
 export async function getRecentPayments(limit: number = 10) {
   try {
@@ -551,11 +603,38 @@ export async function getWaliDashboard(userId: number, studentId?: number) {
       GROUP BY status
     `;
 
-    // Get latest SPP payment
-    const payment = await sql`
-      SELECT * FROM spp_payments WHERE student_id = ${currentStudentId}
-      ORDER BY year DESC, created_at DESC LIMIT 3
+    // Get latest SPP payments for all students of this parent (family)
+    const paymentResult = await sql`
+      SELECT sp.*, s.name as student_name
+      FROM spp_payments sp
+      JOIN students s ON sp.student_id = s.id
+      WHERE s.wali_santri_id = ${userId}
+      ORDER BY sp.year DESC, sp.created_at DESC
     `;
+    const familyPayments = paymentResult.rows;
+
+    const siblingCount = students.length;
+    const requiredAmount = siblingCount >= 3 ? 75000 : 50000;
+
+    // Group family payments by period
+    const periodPaidAmounts: Record<string, number> = {};
+    familyPayments.filter((p: any) => p.status === 'Lunas').forEach((p: any) => {
+      const periodKey = `${p.year}-${p.month || 'none'}-${p.payment_type || 'SPP'}`;
+      periodPaidAmounts[periodKey] = (periodPaidAmounts[periodKey] || 0) + Number(p.amount || 0);
+    });
+
+    // Map family payments adjusting status based on total paid
+    const adjustedPayments = familyPayments.map((p: any) => {
+      const periodKey = `${p.year}-${p.month || 'none'}-${p.payment_type || 'SPP'}`;
+      const totalPaid = periodPaidAmounts[periodKey] || 0;
+      return {
+        ...p,
+        status: totalPaid >= requiredAmount ? 'Lunas' : 'Belum Bayar'
+      };
+    });
+
+    const payments = adjustedPayments.slice(0, 6);
+
 
     // Get iqro progress
     const iqro = await sql`
@@ -586,7 +665,7 @@ export async function getWaliDashboard(userId: number, studentId?: number) {
       students: students,
       parent: parent,
       attendanceSummary: attendance.rows,
-      payments: payment.rows,
+      payments: payments,
       iqroProgress: iqro.rows[0] || null,
       sholatProgress: sholat.rows,
       recentAttendance: recentAttendance.rows,
@@ -760,38 +839,93 @@ export async function getAttendanceSummaryToday() {
 
 export async function getPaymentStatusReport(month: string, year: number, paymentType: string) {
   try {
-    const studentsResult = await sql`SELECT id, name, class FROM students ORDER BY name ASC`;
+    const studentsResult = await sql`SELECT id, name, class, wali_santri_id FROM students ORDER BY name ASC`;
     const students = studentsResult.rows;
 
     let paymentsResult;
     if (paymentType === 'Daftar Ulang') {
-      // Check if they paid at all during the selected year
       paymentsResult = await sql`
         SELECT student_id, amount, payment_date, status, month
         FROM spp_payments 
-        WHERE year = ${year} AND payment_type = 'Daftar Ulang' AND status = 'Lunas'
+        WHERE year = ${year} AND payment_type = 'Daftar Ulang'
       `;
     } else {
-      // Check if they paid for the specific month/year
       paymentsResult = await sql`
         SELECT student_id, amount, payment_date, status
         FROM spp_payments 
-        WHERE month = ${month} AND year = ${year} AND payment_type = 'SPP' AND status = 'Lunas'
+        WHERE month = ${month} AND year = ${year} AND payment_type = 'SPP'
       `;
     }
     const payments = paymentsResult.rows;
 
-    // Map students with their payment status
+    // Group students by wali_santri_id
+    const families: Record<string, any[]> = {};
+    students.forEach((student: any) => {
+      const waliId = student.wali_santri_id ? student.wali_santri_id.toString() : `no-wali-${student.id}`;
+      if (!families[waliId]) {
+        families[waliId] = [];
+      }
+      families[waliId].push(student);
+    });
+
+    // Calculate requiredAmount and totalPaid for each family
+    const familyStats: Record<string, { requiredAmount: number; totalPaid: number; paymentsList: any[] }> = {};
+    Object.keys(families).forEach(waliId => {
+      const familyStudents = families[waliId];
+      const siblingCount = familyStudents.length;
+      const requiredAmount = siblingCount >= 3 ? 75000 : 50000;
+      
+      const familyStudentIds = familyStudents.map(s => s.id);
+      const familyPaymentsList = payments.filter(p => familyStudentIds.includes(p.student_id));
+      const totalPaid = familyPaymentsList.filter(p => p.status === 'Lunas').reduce((sum, p) => sum + Number(p.amount || 0), 0);
+
+      familyStats[waliId] = {
+        requiredAmount,
+        totalPaid,
+        paymentsList: familyPaymentsList,
+      };
+    });
+
+    // Map students with their sibling-aware payment status
     const report = students.map((student: any) => {
-      const payment = payments.find((p: any) => p.student_id === student.id);
+      const waliId = student.wali_santri_id ? student.wali_santri_id.toString() : `no-wali-${student.id}`;
+      const stats = familyStats[waliId];
+      
+      const directPayment = stats.paymentsList.find(p => p.student_id === student.id);
+      const isFamilyLunas = stats.totalPaid >= stats.requiredAmount;
+
+      let status = 'Belum Bayar';
+      let amount = (directPayment && directPayment.status === 'Lunas') ? Number(directPayment.amount) : 0;
+      let paymentDate = null;
+      let paymentMonth = null;
+
+      if (isFamilyLunas) {
+        if (directPayment && Number(directPayment.amount || 0) > 0 && directPayment.status === 'Lunas') {
+          status = 'Lunas';
+          paymentDate = directPayment.payment_date;
+          paymentMonth = directPayment.month || null;
+        } else {
+          status = 'Lunas (Saudara)';
+          const siblingPayment = stats.paymentsList.find(p => Number(p.amount || 0) > 0 && p.status === 'Lunas');
+          paymentDate = siblingPayment ? siblingPayment.payment_date : null;
+          paymentMonth = siblingPayment ? (siblingPayment.month || null) : null;
+        }
+      } else {
+        status = 'Belum Bayar';
+        if (directPayment && directPayment.status === 'Lunas') {
+          paymentDate = directPayment.payment_date;
+          paymentMonth = directPayment.month || null;
+        }
+      }
+
       return {
         studentId: student.id,
         studentName: student.name,
         studentClass: student.class,
-        status: payment ? 'Lunas' : 'Belum Bayar',
-        amount: payment ? Number(payment.amount) : 0,
-        paymentDate: payment ? payment.payment_date : null,
-        paymentMonth: payment ? payment.month : null,
+        status,
+        amount,
+        paymentDate,
+        paymentMonth,
       };
     });
 
@@ -801,6 +935,7 @@ export async function getPaymentStatusReport(month: string, year: number, paymen
     return [];
   }
 }
+
 
 export async function getProgressHafalan(studentId?: number) {
   try {
