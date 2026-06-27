@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { addStudent, updateStudent, deleteStudent, getStudents } from '@/lib/actions';
+import * as XLSX from 'xlsx';
 
 export default function SantriClient({ initialStudents, classes }: { initialStudents: any[], classes: string[] }) {
   const [students, setStudents] = useState(initialStudents);
@@ -14,6 +15,22 @@ export default function SantriClient({ initialStudents, classes }: { initialStud
   
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+
+  const handleExportExcel = () => {
+    const exportData = students.map(student => ({
+      'Nama Santri': student.name,
+      'Kelas': student.class,
+      'Nama Orang Tua / Wali': student.parent_name,
+      'No. Telepon / HP': student.phone || '-',
+      'Alamat': student.address || '-',
+      'Tanggal Terdaftar': student.created_at ? new Date(student.created_at).toLocaleDateString('id-ID') : '-'
+    }));
+    
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Data Santri');
+    XLSX.writeFile(workbook, `Data_Santri_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
 
   const handleSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -86,13 +103,22 @@ export default function SantriClient({ initialStudents, classes }: { initialStud
           <h2 className="text-2xl font-bold text-slate-900">Manajemen Santri</h2>
           <p className="text-secondary text-sm">Total {students.length} santri terdaftar</p>
         </div>
-        <button 
-          onClick={openAddModal}
-          className="bg-primary hover:bg-primary-container text-white px-4 py-2 rounded-xl flex items-center gap-2 font-medium shadow-sm transition-colors"
-        >
-          <span className="material-symbols-outlined">person_add</span>
-          Tambah Santri
-        </button>
+        <div className="flex gap-2 w-full md:w-auto">
+          <button 
+            onClick={handleExportExcel}
+            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl flex items-center gap-2 font-medium shadow-sm transition-colors"
+          >
+            <span className="material-symbols-outlined">download</span>
+            Export Excel
+          </button>
+          <button 
+            onClick={openAddModal}
+            className="bg-primary hover:bg-primary-container text-white px-4 py-2 rounded-xl flex items-center gap-2 font-medium shadow-sm transition-colors"
+          >
+            <span className="material-symbols-outlined">person_add</span>
+            Tambah Santri
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl p-4 shadow-sm border border-emerald-50">

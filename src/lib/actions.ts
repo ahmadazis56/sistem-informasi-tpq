@@ -962,3 +962,83 @@ export async function getProgressHafalan(studentId?: number) {
     return [];
   }
 }
+
+// ─── TEACHER ATTENDANCE ACTIONS ─────────────────────────────────
+
+export async function getTeachers() {
+  try {
+    const result = await sql`
+      SELECT id, name, email, role FROM users WHERE role = 'guru' ORDER BY id ASC
+    `;
+    const requiredTeachers = [
+      { name: 'Bpk Acah', email: 'acah@tpq.com' },
+      { name: 'Kk Bana', email: 'bana@tpq.com' },
+      { name: 'Kk Badriah', email: 'badriah@tpq.com' },
+      { name: 'Kk Pitri', email: 'pitri@tpq.com' },
+      { name: 'Kk Azis', email: 'azis@gmail.com' }
+    ];
+
+    const existingEmails = new Set(result.rows.map((r: any) => r.email));
+    let databaseUpdated = false;
+
+    for (const teacher of requiredTeachers) {
+      if (!existingEmails.has(teacher.email)) {
+        await sql`
+          INSERT INTO users (name, email, password, role)
+          VALUES (${teacher.name}, ${teacher.email}, 'password123', 'guru')
+        `;
+        databaseUpdated = true;
+      }
+    }
+
+    if (databaseUpdated) {
+      const refetched = await sql`
+        SELECT id, name, email, role FROM users WHERE role = 'guru' ORDER BY id ASC
+      `;
+      return refetched.rows;
+    }
+
+    return result.rows;
+  } catch (error) {
+    console.error('Error fetching teachers:', error);
+    return [];
+  }
+}
+
+export async function getTeacherAttendance(date: string) {
+  try {
+    // Ensure all 5 teachers exist
+    await getTeachers();
+
+    const result = await sql`
+      SELECT u.id as teacher_id, u.name, ta.status, ta.id as attendance_id
+      FROM users u
+      LEFT JOIN teacher_attendance ta ON u.id = ta.teacher_id AND ta.date = ${date}
+      WHERE u.role = 'guru'
+      ORDER BY u.name ASC
+    `;
+    return result.rows;
+  } catch (error) {
+    console.error('Error fetching teacher attendance:', error);
+    return [];
+  }
+}
+
+export async function saveTeacherAttendance(records: { teacherId: number; date: string; status: string }[]) {
+  try {
+    for (const record of records) {
+      await sql`
+        DELETE FROM teacher_attendance WHERE teacher_id = ${record.teacherId} AND date = ${record.date}
+      `;
+      await sql`
+        INSERT INTO teacher_attendance (teacher_id, date, status)
+        VALUES (${record.teacherId}, ${record.date}, ${record.status})
+      `;
+    }
+    revalidatePath('/absensi');
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error saving teacher attendance:', error);
+    return { error: error.message || 'Gagal menyimpan absensi ustaz.' };
+  }
+}

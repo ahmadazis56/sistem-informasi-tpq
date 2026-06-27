@@ -1,7 +1,32 @@
 import { sql } from '@/lib/db';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  if (searchParams.get('check') === 'true') {
+    try {
+      const students = await sql`SELECT COUNT(*) as count FROM students`;
+      const spp = await sql`SELECT COUNT(*) as count FROM spp_payments`;
+      const iqro = await sql`SELECT COUNT(*) as count FROM progress_iqro_quran`;
+      const sholat = await sql`SELECT COUNT(*) as count FROM progress_sholat`;
+      const hafalan = await sql`SELECT COUNT(*) as count FROM progress_hafalan`;
+      const users = await sql`SELECT COUNT(*) as count FROM users`;
+
+      const usersInfo = await sql`SELECT id, name, email, role FROM users WHERE email = 'azis@gmail.com'`;
+      return NextResponse.json({
+        students: Number(students.rows[0]?.count || 0),
+        spp: Number(spp.rows[0]?.count || 0),
+        iqro: Number(iqro.rows[0]?.count || 0),
+        sholat: Number(sholat.rows[0]?.count || 0),
+        hafalan: Number(hafalan.rows[0]?.count || 0),
+        users: Number(users.rows[0]?.count || 0),
+        azis: usersInfo.rows[0] || null
+      });
+    } catch (error: any) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+  }
+
   try {
     // Create Users table
     await sql`
@@ -104,6 +129,17 @@ export async function GET() {
         surah_name VARCHAR(100) NOT NULL,
         status VARCHAR(50) NOT NULL,
         notes TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
+    // Create Teacher Attendance table
+    await sql`
+      CREATE TABLE IF NOT EXISTS teacher_attendance (
+        id SERIAL PRIMARY KEY,
+        teacher_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        date DATE NOT NULL,
+        status VARCHAR(20) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `;

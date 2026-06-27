@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
 
-const publicRoutes = ['/login', '/api/setup', '/api/seed', '/api/auth'];
+const publicRoutes = ['/login', '/api/setup', '/api/seed', '/api/auth', '/api/check-db'];
 
 export async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;

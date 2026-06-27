@@ -32,6 +32,17 @@ async function getSqliteDb() {
           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         );
       `);
+
+      // Create teacher_attendance table if not exists
+      sqliteDb.exec(`
+        CREATE TABLE IF NOT EXISTS teacher_attendance (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          teacher_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+          date TEXT NOT NULL,
+          status TEXT NOT NULL,
+          created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
     } catch (e) {
       console.error('SQLite migration error:', e);
     }

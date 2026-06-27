@@ -87,22 +87,33 @@ export async function GET() {
     // Delete tables to avoid duplicates and reset auto-increment IDs
     await sql`DELETE FROM spp_payments;`;
     await sql`DELETE FROM attendance;`;
+    await sql`DELETE FROM teacher_attendance;`;
     await sql`DELETE FROM progress_iqro_quran;`;
     await sql`DELETE FROM progress_sholat;`;
     await sql`DELETE FROM progress_hafalan;`;
     await sql`DELETE FROM students;`;
     await sql`DELETE FROM users;`;
     try {
-      await sql`DELETE FROM sqlite_sequence WHERE name IN ('spp_payments', 'attendance', 'progress_iqro_quran', 'progress_sholat', 'progress_hafalan', 'students', 'users');`;
+      await sql`DELETE FROM sqlite_sequence WHERE name IN ('spp_payments', 'attendance', 'teacher_attendance', 'progress_iqro_quran', 'progress_sholat', 'progress_hafalan', 'students', 'users');`;
     } catch (e) {
       // sqlite_sequence might not exist if tables were never created with AUTOINCREMENT, ignore
     }
 
-    // 1. Seed Teacher (Guru)
-    await sql`
-      INSERT INTO users (name, email, password, role)
-      VALUES ('Ustaz Azis', 'azis@gmail.com', 'password123', 'guru');
-    `;
+    // 1. Seed Teachers (Guru)
+    const teachersToSeed = [
+      { name: 'Bpk Acah', email: 'acah@tpq.com' },
+      { name: 'Kk Bana', email: 'bana@tpq.com' },
+      { name: 'Kk Badriah', email: 'badriah@tpq.com' },
+      { name: 'Kk Pitri', email: 'pitri@tpq.com' },
+      { name: 'Kk Azis', email: 'azis@gmail.com' } // Keeps existing email to maintain login credentials
+    ];
+
+    for (const t of teachersToSeed) {
+      await sql`
+        INSERT INTO users (name, email, password, role)
+        VALUES (${t.name}, ${t.email}, 'password123', 'guru');
+      `;
+    }
 
     const studentWaliMap: Record<string, number> = {};
 
@@ -210,15 +221,107 @@ export async function GET() {
       `;
 
       // E. Seed mock progress (Hafalan Juz 30)
-      await sql`
-        INSERT INTO progress_hafalan (student_id, surah_name, status, notes)
-        VALUES 
-          (${student.id}, 'An-Nas', 'SEMPURNA', 'Lancar, tajwid baik.'),
-          (${student.id}, 'Al-Falaq', 'SEMPURNA', 'Bagus pelafalannya.'),
-          (${student.id}, 'Al-Ikhlas', 'SEMPURNA', 'Hafal lancar.'),
-          (${student.id}, 'Al-Lahab', 'LANCAR', 'Perlu diperhatikan panjang pendeknya.'),
-          (${student.id}, 'An-Nasr', 'BELUM LANCAR', 'Masih terbata-bata di ayat terakhir.');
-      `;
+      const nameLower = student.name.toLowerCase();
+      if (nameLower === 'dimas maulana') {
+        const dimasData = [
+          { surah: 'An-Nas', date: '2026-06-19', notes: 'Lulus Semua' },
+          { surah: 'Al-Falaq', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Ikhlas', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Lahab', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'An-Nasr', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Kafirun', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Kausar', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Ma\'un', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Quraisy', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Fil', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Humazah', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-\'Asr', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'At-Tin', date: '2026-06-19', notes: 'Lulus' },
+          { surah: 'Asy-Syarh', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Ad-Duha', date: '2026-06-19', notes: 'Lulus Semua' }
+        ];
+        for (const h of dimasData) {
+          await sql`
+            INSERT INTO progress_hafalan (student_id, surah_name, status, notes, created_at)
+            VALUES (${student.id}, ${h.surah}, 'SEMPURNA', ${h.notes}, ${new Date(h.date)});
+          `;
+        }
+      } else if (nameLower === 'fatih ali muslim') {
+        const fatihData = [
+          { surah: 'An-Nas', date: '2026-06-19', notes: 'Lulus' },
+          { surah: 'Al-Falaq', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Ikhlas', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Lahab', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'An-Nasr', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Kafirun', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Kausar', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Ma\'un', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Quraisy', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Fil', date: '2026-06-26', notes: 'Lulus' }
+        ];
+        for (const h of fatihData) {
+          await sql`
+            INSERT INTO progress_hafalan (student_id, surah_name, status, notes, created_at)
+            VALUES (${student.id}, ${h.surah}, 'SEMPURNA', ${h.notes}, ${new Date(h.date)});
+          `;
+        }
+      } else if (nameLower === 'ah. alif rizki') {
+        const alifData = [
+          { surah: 'An-Nas', date: '2026-06-05', notes: 'Lulus' },
+          { surah: 'Al-Falaq', date: '2026-06-19', notes: 'Lulus' }
+        ];
+        for (const h of alifData) {
+          await sql`
+            INSERT INTO progress_hafalan (student_id, surah_name, status, notes, created_at)
+            VALUES (${student.id}, ${h.surah}, 'SEMPURNA', ${h.notes}, ${new Date(h.date)});
+          `;
+        }
+      } else if (nameLower === 'sopian hamdi') {
+        const pianData = [
+          { surah: 'An-Nas', date: '2026-06-19', notes: 'Lulus' },
+          { surah: 'Al-Falaq', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Ikhlas', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Lahab', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'An-Nasr', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Kafirun', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Kausar', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Ma\'un', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Quraisy', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Fil', date: '2026-06-26', notes: 'Lulus' }
+        ];
+        for (const h of pianData) {
+          await sql`
+            INSERT INTO progress_hafalan (student_id, surah_name, status, notes, created_at)
+            VALUES (${student.id}, ${h.surah}, 'SEMPURNA', ${h.notes}, ${new Date(h.date)});
+          `;
+        }
+      } else if (nameLower === 'ain al qadri') {
+        const ainData = [
+          { surah: 'An-Nas', date: '2026-06-19', notes: 'Lulus Semua' },
+          { surah: 'Al-Falaq', date: '2026-06-19', notes: 'Lulus Semua' },
+          { surah: 'Al-Ikhlas', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Lahab', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'An-Nasr', date: '2026-06-26', notes: 'Lulus' },
+          { surah: 'Al-Kausar', date: '2026-06-26', notes: 'Lulus' }
+        ];
+        for (const h of ainData) {
+          await sql`
+            INSERT INTO progress_hafalan (student_id, surah_name, status, notes, created_at)
+            VALUES (${student.id}, ${h.surah}, 'SEMPURNA', ${h.notes}, ${new Date(h.date)});
+          `;
+        }
+      } else {
+        // Fallback for other students
+        await sql`
+          INSERT INTO progress_hafalan (student_id, surah_name, status, notes)
+          VALUES 
+            (${student.id}, 'An-Nas', 'SEMPURNA', 'Lancar, tajwid baik.'),
+            (${student.id}, 'Al-Falaq', 'SEMPURNA', 'Bagus pelafalannya.'),
+            (${student.id}, 'Al-Ikhlas', 'SEMPURNA', 'Hafal lancar.'),
+            (${student.id}, 'Al-Lahab', 'LANCAR', 'Perlu diperhatikan panjang pendeknya.'),
+            (${student.id}, 'An-Nasr', 'BELUM LANCAR', 'Masih terbata-bata di ayat terakhir.');
+        `;
+      }
     }
 
     return NextResponse.json({ 
