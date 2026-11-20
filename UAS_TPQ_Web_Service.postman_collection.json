@@ -1,0 +1,809 @@
+{
+  "info": {
+    "_postman_id": "a700ed84-b80c-4361-9ee3-e1cad8e38700",
+    "name": "SISTEM_INFORMASI_MANAJEMEN_TPQ",
+    "description": "Dokumentasi Lengkap RESTful API Sistem Informasi Manajemen TPQ Darul Ikhlas (TPQ Ihlas)\nEvaluasi Kualitas Menggunakan Standar ISO/IEC 25010\n\nPengembang: AHMAD AZIS SUPIADI\nNIM: 2301040025\nProgram Studi S1 Rekayasa Perangkat Lunak, Fakultas Teknik, Universitas Bumigora, Mataram, 2026.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Auth",
+      "description": "Manajemen autentikasi pengguna, otorisasi sesi, pendaftaran asatidz, dan logout.",
+      "item": [
+        {
+          "name": "Registrasi User Baru",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Ustadz Ahmad Azis\",\n  \"email\": \"azis.guru@tpq.com\",\n  \"password\": \"password123\",\n  \"role\": \"guru\",\n  \"phone\": \"081234567890\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"name\": \"Ustadz Ahmad Azis\", \"email\": \"azis.guru@tpq.com\", \"password\": \"password123\", \"role\": \"guru\"}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/register"
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Registrasi pengguna baru berhasil\",\n  \"user\": {\n    \"id\": 10,\n    \"name\": \"Ustadz Ahmad Azis\",\n    \"email\": \"azis.guru@tpq.com\",\n    \"role\": \"guru\",\n    \"phone\": \"081234567890\",\n    \"created_at\": \"2026-11-21T06:30:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login User & Get Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"guru@tpq.com\",\n  \"password\": \"guru\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Login berhasil\",\n  \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6IlVzdGFkeiIsImVtYWlsIjoiZ3VydUB0cHEuY29tIiwicm9sZSI6Imd1cnUifQ\",\n  \"token_type\": \"bearer\",\n  \"expires_in\": 2592000,\n  \"user\": {\n    \"id\": 1,\n    \"name\": \"Ustadz Pembina\",\n    \"email\": \"guru@tpq.com\",\n    \"role\": \"guru\",\n    \"phone\": \"081234567800\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Data User Profil (Me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"user\": {\n    \"id\": 1,\n    \"name\": \"Ustadz Pembina\",\n    \"email\": \"guru@tpq.com\",\n    \"role\": \"guru\",\n    \"phone\": \"081234567800\",\n    \"avatar_url\": \"/avatar1.png\",\n    \"created_at\": \"2026-11-20T10:00:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Logout User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"User successfully signed out\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Santri",
+      "description": "Pengelolaan data master santri: pendaftaran, filter kelas, pembaruan, dan penghapusan cascade.",
+      "item": [
+        {
+          "name": "Lihat Semua Santri",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/santri",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "santri"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"count\": 45,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"name\": \"Aban Azhari\",\n      \"class\": \"Al-Qur'an\",\n      \"address\": \"KBS\",\n      \"phone\": \"081234567890\"\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Adreena Keysha\",\n      \"class\": \"Iqra' 1\",\n      \"address\": \"GTS\",\n      \"phone\": \"081234567891\"\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Ahmad Zakwan Razik\",\n      \"class\": \"Al-Qur'an\",\n      \"address\": \"KBS\",\n      \"phone\": \"081234567892\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Tambah Data Santri Baru",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Muhammad Ilham Pratama\",\n  \"class\": \"Iqra' 3\",\n  \"address\": \"Griya Taman Sari Blok B No. 4\",\n  \"parent_name\": \"Bpk. Bambang\",\n  \"phone\": \"081999888777\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/santri",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "santri"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Data santri berhasil ditambahkan\",\n  \"data\": {\n    \"id\": 46,\n    \"name\": \"Muhammad Ilham Pratama\",\n    \"class\": \"Iqra' 3\",\n    \"address\": \"Griya Taman Sari Blok B No. 4\",\n    \"parent_name\": \"Bpk. Bambang\",\n    \"phone\": \"081999888777\",\n    \"created_at\": \"2026-11-21T06:32:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Detail Data Santri",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/santri/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "santri",
+                "1"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Aban Azhari\",\n    \"class\": \"Al-Qur'an\",\n    \"address\": \"KBS\",\n    \"parent_name\": \"Bpk. Azhari\",\n    \"phone\": \"081234567890\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Ubah Data Santri",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Aban Azhari\",\n  \"class\": \"Al-Qur'an (Tahfidz)\",\n  \"address\": \"KBS Mataram\",\n  \"phone\": \"081234567899\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/santri/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "santri",
+                "1"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Data santri berhasil diperbarui\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Aban Azhari\",\n    \"class\": \"Al-Qur'an (Tahfidz)\",\n    \"address\": \"KBS Mataram\",\n    \"phone\": \"081234567899\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Hapus Data Santri",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/santri/46",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "santri",
+                "46"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Santri Muhammad Ilham Pratama berhasil dihapus beserta data riwayatnya\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Absensi & Kehadiran",
+      "description": "Pencatatan dan pemantauan presensi santri dan asatidz harian.",
+      "item": [
+        {
+          "name": "Lihat Absensi Santri Hari Ini",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/absensi?date=2026-11-21",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "absensi"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2026-11-21"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"date\": \"2026-11-21\",\n  \"count\": 45,\n  \"data\": [\n    {\n      \"id\": 101,\n      \"student_id\": 1,\n      \"name\": \"Aban Azhari\",\n      \"class\": \"Al-Qur'an\",\n      \"status\": \"Hadir\"\n    },\n    {\n      \"id\": 102,\n      \"student_id\": 2,\n      \"name\": \"Adreena Keysha\",\n      \"class\": \"Iqra' 1\",\n      \"status\": \"Izin\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Simpan Batch Presensi Santri",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"records\": [\n    {\n      \"studentId\": 1,\n      \"date\": \"2026-11-21\",\n      \"status\": \"Hadir\"\n    },\n    {\n      \"studentId\": 2,\n      \"date\": \"2026-11-21\",\n      \"status\": \"Hadir\"\n    },\n    {\n      \"studentId\": 3,\n      \"date\": \"2026-11-21\",\n      \"status\": \"Sakit\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/absensi",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "absensi"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Presensi sebanyak 3 santri berhasil dicatat\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Keuangan & SPP",
+      "description": "Pengelolaan transaksi SPP, status lunas/tunggakan, dan sibling payment sharing.",
+      "item": [
+        {
+          "name": "Lihat Status Pembayaran SPP Bulanan",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/bayar?month=November&year=2026",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "bayar"
+              ],
+              "query": [
+                {
+                  "key": "month",
+                  "value": "November"
+                },
+                {
+                  "key": "year",
+                  "value": "2026"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"month\": \"November\",\n  \"year\": 2026,\n  \"summary\": {\n    \"paid_total\": 750000,\n    \"paid_count\": 30,\n    \"unpaid_total\": 375000,\n    \"unpaid_count\": 15\n  },\n  \"count\": 45,\n  \"data\": [\n    {\n      \"id\": 201,\n      \"student_id\": 1,\n      \"name\": \"Aban Azhari\",\n      \"amount\": 25000,\n      \"status\": \"Lunas\",\n      \"payment_type\": \"SPP\"\n    },\n    {\n      \"id\": 202,\n      \"student_id\": 2,\n      \"name\": \"Adreena Keysha\",\n      \"amount\": 25000,\n      \"status\": \"Lunas\",\n      \"payment_type\": \"SPP\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Catat Setoran SPP Baru",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student_id\": 1,\n  \"month\": \"November\",\n  \"year\": 2026,\n  \"amount\": 25000,\n  \"status\": \"Lunas\",\n  \"payment_type\": \"SPP\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/bayar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "bayar"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Pembayaran SPP November 2026 berhasil dicatat sebagai Lunas\",\n  \"data\": {\n    \"id\": 250,\n    \"student_id\": 1,\n    \"month\": \"November\",\n    \"year\": 2026,\n    \"amount\": 25000,\n    \"status\": \"Lunas\",\n    \"payment_date\": \"2026-11-21T06:35:00.000Z\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Progres Akademik Santri",
+      "description": "Digitalisasi kartu prestasi santri: jilid Iqro, kelulusan surat pendek Juz 30, dan praktik sholat.",
+      "item": [
+        {
+          "name": "Lihat Capaian Jilid Iqro",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/progres/iqro?student_id=2",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "progres",
+                "iqro"
+              ],
+              "query": [
+                {
+                  "key": "student_id",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"count\": 1,\n  \"data\": [\n    {\n      \"id\": 1,\n      \"student_id\": 2,\n      \"name\": \"Adreena Keysha\",\n      \"level\": \"Iqro 1\",\n      \"page_surah\": \"Halaman 18\",\n      \"notes\": \"Makhraj huruf hijaiyah baik\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Simpan Progres Iqro Baru",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student_id\": 2,\n  \"level\": \"Iqro 1\",\n  \"page_surah\": \"Halaman 20\",\n  \"notes\": \"Lanjut ke halaman berikutnya, pertahankan kelancaran bacaan.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/progres/iqro",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "progres",
+                "iqro"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Capaian Iqro/Quran santri berhasil dicatat\",\n  \"data\": {\n    \"id\": 5,\n    \"student_id\": 2,\n    \"level\": \"Iqro 1\",\n    \"page_surah\": \"Halaman 20\",\n    \"notes\": \"Lanjut ke halaman berikutnya, pertahankan kelancaran bacaan.\",\n    \"created_at\": \"2026-11-21T06:36:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Lihat Riwayat Hafalan Juz 30",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/progres/hafalan?student_id=3",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "progres",
+                "hafalan"
+              ],
+              "query": [
+                {
+                  "key": "student_id",
+                  "value": "3"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"count\": 3,\n  \"data\": [\n    {\n      \"id\": 11,\n      \"student_id\": 3,\n      \"surah_name\": \"Surat An-Nas\",\n      \"status\": \"Lulus\",\n      \"notes\": \"Ayat 1-6 lancar\"\n    },\n    {\n      \"id\": 12,\n      \"student_id\": 3,\n      \"surah_name\": \"Surat Al-Falaq\",\n      \"status\": \"Lulus\",\n      \"notes\": \"Ayat 1-5 lancar\"\n    },\n    {\n      \"id\": 13,\n      \"student_id\": 3,\n      \"surah_name\": \"Surat Al-Ikhlas\",\n      \"status\": \"Lulus\",\n      \"notes\": \"Ayat 1-4 fasih\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Catat Kelulusan Hafalan Surat Baru",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student_id\": 3,\n  \"surah_name\": \"Surat Al-Lahab\",\n  \"status\": \"Lulus\",\n  \"notes\": \"Lulus Munaqasyah ayat 1-5 dengan tajwid tartil\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/progres/hafalan",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "progres",
+                "hafalan"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"message\": \"Kelulusan hafalan Surat Al-Lahab berhasil dicatat\",\n  \"data\": {\n    \"id\": 14,\n    \"student_id\": 3,\n    \"surah_name\": \"Surat Al-Lahab\",\n    \"status\": \"Lulus\",\n    \"notes\": \"Lulus Munaqasyah ayat 1-5 dengan tajwid tartil\",\n    \"created_at\": \"2026-11-21T06:37:00.000Z\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "6. Utilitas Database & Maintenance",
+      "description": "Layanan inisialisasi tabel, pemeriksaan kesehatan basis data, dan seeding master data.",
+      "item": [
+        {
+          "name": "Periksa Kesehatan Database",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/setup?check=true",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "setup"
+              ],
+              "query": [
+                {
+                  "key": "check",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"students\": 45,\n  \"spp\": 45,\n  \"iqro\": 20,\n  \"sholat\": 15,\n  \"hafalan\": 60,\n  \"users\": 8,\n  \"azis\": {\n    \"id\": 1,\n    \"name\": \"Ahmad Azis\",\n    \"email\": \"azis@gmail.com\",\n    \"role\": \"guru\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Inisialisasi Tabel (Auto-Migration)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/setup",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "setup"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"Database tables created successfully\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -12,7 +12,7 @@ export default async function AppLayout({
   if (!session) redirect('/login');
 
   return (
-    <div className="pt-16 pb-24 min-h-screen bg-surface">
+    <div className="pt-16 pb-24 min-h-screen bg-[#09090b] text-zinc-100 cyber-grid">
       <TopAppBar userName={session.name} />
       <main className="flex-grow container mx-auto px-4 py-6 max-w-7xl">
         {children}
@@ -21,3 +21,4 @@ export default async function AppLayout({
     </div>
   );
 }
+

@@ -178,30 +178,30 @@ export default async function WaliDashboard() {
       )}
 
       {/* Main Stats Card */}
-      <div className="bg-gradient-to-r from-primary to-primary-container rounded-2xl p-6 text-on-primary shadow-md relative overflow-hidden">
+      <div className="bg-gradient-to-br from-zinc-950 via-zinc-900 to-black rounded-3xl p-6 text-white shadow-xl border border-zinc-800 relative overflow-hidden">
         <div className="absolute -right-4 -top-12 opacity-10">
-          <span className="material-symbols-outlined text-[150px]">menu_book</span>
+          <span className="material-symbols-outlined text-[150px] text-emerald-400">menu_book</span>
         </div>
         <div className="relative z-10 flex items-center gap-4">
           {parent?.avatar_url ? (
             <img 
               src={parent.avatar_url} 
               alt="Avatar" 
-              className="w-16 h-16 rounded-full border-2 border-white/40 shadow-inner object-cover" 
+              className="w-16 h-16 rounded-full border-2 border-emerald-500/40 shadow-inner object-cover" 
               />
           ) : (
-            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-2xl font-bold border-2 border-white/40 shadow-inner">
+            <div className="w-16 h-16 bg-gradient-to-tr from-emerald-500 to-teal-500 text-white rounded-full flex items-center justify-center text-2xl font-black border-2 border-emerald-400/40 shadow-lg shadow-emerald-500/20">
               {student.name.substring(0, 2).toUpperCase()}
             </div>
           )}
           <div>
-            <h2 className="text-2xl font-bold">{student.name}</h2>
-            <div className="flex gap-3 mt-1 text-primary-container-low">
-              <span className="flex items-center gap-1 text-sm bg-black/10 px-2 py-0.5 rounded-md">
+            <h2 className="text-2xl font-extrabold text-white tracking-tight">{student.name}</h2>
+            <div className="flex gap-3 mt-1.5 text-zinc-300">
+              <span className="flex items-center gap-1 text-xs bg-zinc-900 border border-zinc-800 px-3 py-1 rounded-full font-bold text-emerald-400">
                 <span className="material-symbols-outlined text-sm">school</span>
                 Kelas: {student.class}
               </span>
-              <span className="flex items-center gap-1 text-sm bg-black/10 px-2 py-0.5 rounded-md">
+              <span className="flex items-center gap-1 text-xs bg-zinc-900 border border-zinc-800 px-3 py-1 rounded-full font-bold text-teal-400">
                 <span className="material-symbols-outlined text-sm">badge</span>
                 NIS: {23000 + student.id}
               </span>
@@ -211,13 +211,13 @@ export default async function WaliDashboard() {
       </div>
 
       {/* Jadwal Pelajaran Card */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-emerald-50">
+      <div className="bg-zinc-900/90 rounded-3xl p-6 shadow-xl border border-zinc-800">
         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4">
-          <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary">calendar_today</span>
+          <h3 className="text-lg font-extrabold text-white flex items-center gap-2">
+            <span className="material-symbols-outlined text-emerald-400">calendar_today</span>
             Jadwal Pelajaran Kelas {isAlQuran ? 'Al-Qur\'an' : 'Iqro'}
           </h3>
-          <span className="text-xs text-primary bg-primary-container px-3 py-1.5 rounded-xl font-semibold border border-primary/10 self-start sm:self-auto">
+          <span className="text-xs text-emerald-400 bg-emerald-950/80 px-3 py-1.5 rounded-full font-bold border border-emerald-500/30 self-start sm:self-auto">
             Hari ini: {todayDayName}
           </span>
         </div>
@@ -227,23 +227,23 @@ export default async function WaliDashboard() {
             return (
               <div 
                 key={idx} 
-                className={`p-3 rounded-xl border text-center transition-all duration-300 relative ${
+                className={`p-3 rounded-2xl border text-center transition-all duration-300 relative ${
                   isToday 
-                    ? 'bg-primary text-white border-primary shadow-md scale-105 z-10 font-medium' 
-                    : 'bg-slate-50 border-slate-100 text-slate-700 hover:bg-slate-100/70 hover:border-slate-200'
+                    ? 'bg-gradient-to-br from-emerald-600 to-teal-600 text-white border-emerald-400 shadow-lg shadow-emerald-500/25 scale-105 z-10 font-medium' 
+                    : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:bg-zinc-900 hover:border-zinc-700'
                 }`}
               >
-                <p className={`text-[10px] font-bold uppercase tracking-wider ${isToday ? 'text-primary-container-low' : 'text-slate-400'}`}>
+                <p className={`text-[10px] font-extrabold uppercase tracking-wider ${isToday ? 'text-emerald-100' : 'text-zinc-500'}`}>
                   {item.day}
                 </p>
-                <span className={`material-symbols-outlined text-2xl my-2 block ${isToday ? 'text-white' : 'text-primary'}`}>
+                <span className={`material-symbols-outlined text-2xl my-2 block ${isToday ? 'text-white' : 'text-emerald-400'}`}>
                   {item.icon}
                 </span>
-                <p className="text-xs font-bold truncate">
+                <p className="text-xs font-bold truncate text-white">
                   {item.subject}
                 </p>
                 {isToday && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-white text-[8px] px-1.5 py-0.5 rounded-full font-black uppercase tracking-widest shadow-sm animate-pulse">
+                  <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-white text-[8px] px-2 py-0.5 rounded-full font-black uppercase tracking-widest shadow-md animate-pulse">
                     Hari Ini
                   </span>
                 )}
@@ -256,46 +256,46 @@ export default async function WaliDashboard() {
       {/* Grid Row 1: Hafalan Juz 30 & Progres Mengaji */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Hafalan Juz 30 Summary Card */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-emerald-50 flex flex-col justify-between">
+        <div className="bg-zinc-900/90 rounded-3xl p-6 shadow-xl border border-zinc-800 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary font-bold">menu_book</span>
+              <h3 className="text-lg font-extrabold text-white flex items-center gap-2">
+                <span className="material-symbols-outlined text-emerald-400 font-bold">menu_book</span>
                 Hafalan Juz 30
               </h3>
-              <span className="text-sm font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-md">
+              <span className="text-xs font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-500/30 px-3 py-1 rounded-full">
                 {hafalanPercentage}% Selesai
               </span>
             </div>
 
             <div className="space-y-4">
               <div>
-                <div className="flex justify-between text-xs text-secondary mb-1">
+                <div className="flex justify-between text-xs text-zinc-400 mb-1.5 font-medium">
                   <span>Progres Hafalan</span>
-                  <span className="font-semibold">{memorizedSurahsCount} dari {totalJuz30Surahs} Surah</span>
+                  <span className="font-bold text-white">{memorizedSurahsCount} dari {totalJuz30Surahs} Surah</span>
                 </div>
-                <div className="w-full bg-slate-100 rounded-full h-3">
+                <div className="w-full bg-zinc-950 rounded-full h-3 border border-zinc-800">
                   <div 
-                    className="bg-primary h-3 rounded-full transition-all duration-500" 
+                    className="bg-gradient-to-r from-emerald-500 to-teal-500 h-3 rounded-full transition-all duration-500" 
                     style={{ width: `${hafalanPercentage}%` }}
                   ></div>
                 </div>
               </div>
 
               <div>
-                <h4 className="text-xs font-semibold text-slate-800 uppercase tracking-wider mb-2">Riwayat Hafalan Terbaru</h4>
+                <h4 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Riwayat Hafalan Terbaru</h4>
                 {hafalanProgress.length > 0 ? (
                   <div className="space-y-2">
                     {hafalanProgress.slice(0, 3).map((item: any, idx: number) => (
-                      <div key={idx} className="flex justify-between items-start text-sm p-2 rounded-xl bg-slate-50 border border-slate-100">
+                      <div key={idx} className="flex justify-between items-start text-sm p-3 rounded-2xl bg-zinc-950 border border-zinc-800">
                         <div>
-                          <p className="font-semibold text-slate-800">Q.S. {item.surah_name}</p>
-                          {item.notes && <p className="text-xs text-secondary italic mt-0.5">"{item.notes}"</p>}
+                          <p className="font-bold text-white text-xs">Q.S. {item.surah_name}</p>
+                          {item.notes && <p className="text-xs text-zinc-400 italic mt-0.5">"{item.notes}"</p>}
                         </div>
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 ${
-                          item.status === 'SEMPURNA' ? 'bg-emerald-100 text-primary' :
-                          item.status === 'LANCAR' ? 'bg-blue-100 text-blue-700' :
-                          'bg-amber-100 text-amber-700'
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold shrink-0 border ${
+                          item.status === 'SEMPURNA' ? 'bg-emerald-950/80 text-emerald-400 border-emerald-500/30' :
+                          item.status === 'LANCAR' ? 'bg-teal-950/80 text-teal-400 border-teal-500/30' :
+                          'bg-amber-950/80 text-amber-400 border-amber-500/30'
                         }`}>
                           {item.status}
                         </span>
@@ -303,7 +303,7 @@ export default async function WaliDashboard() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-secondary text-center py-4 bg-slate-50 rounded-xl border border-slate-100">
+                  <p className="text-xs text-zinc-500 text-center py-4 bg-zinc-950 rounded-2xl border border-zinc-800 font-medium">
                     Belum ada riwayat hafalan Juz 30.
                   </p>
                 )}
@@ -311,10 +311,10 @@ export default async function WaliDashboard() {
             </div>
           </div>
 
-          <div className="pt-4 border-t border-slate-50 mt-4">
+          <div className="pt-4 border-t border-zinc-800 mt-4">
             <Link 
               href="/wali/laporan" 
-              className="flex items-center justify-center gap-1.5 w-full text-center py-2.5 bg-primary-container text-on-primary-container font-semibold rounded-xl text-sm hover:bg-primary-container/80 transition-colors"
+              className="flex items-center justify-center gap-1.5 w-full text-center py-3 bg-zinc-800 hover:bg-zinc-700 text-emerald-400 font-bold rounded-2xl text-xs border border-zinc-700 transition-colors"
             >
               <span className="material-symbols-outlined text-[16px]">visibility</span>
               Lihat Detail Hafalan
@@ -323,39 +323,39 @@ export default async function WaliDashboard() {
         </div>
 
         {/* Progress Iqro/Quran Card */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-emerald-50 flex flex-col justify-between">
+        <div className="bg-zinc-900/90 rounded-3xl p-6 shadow-xl border border-zinc-800 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">auto_stories</span>
+              <h3 className="text-lg font-extrabold text-white flex items-center gap-2">
+                <span className="material-symbols-outlined text-emerald-400">auto_stories</span>
                 Progres Mengaji (Iqro/Quran)
               </h3>
             </div>
             
             {iqroProgress ? (
-              <div className="bg-surface-container-low rounded-xl p-4 border border-slate-200">
+              <div className="bg-zinc-950 rounded-2xl p-4 border border-zinc-800">
                 <div className="flex justify-between items-end mb-2">
-                  <p className="text-sm text-secondary">Terakhir diupdate: {formatDate(iqroProgress.created_at)}</p>
+                  <p className="text-xs text-zinc-400">Terakhir diupdate: {formatDate(iqroProgress.created_at)}</p>
                 </div>
                 <div className="flex items-baseline gap-2 mb-3">
-                  <span className="text-3xl font-bold text-primary">{iqroProgress.level}</span>
-                  <span className="text-lg font-medium text-primary">{iqroProgress.page_surah}</span>
+                  <span className="text-3xl font-extrabold text-emerald-400">{iqroProgress.level}</span>
+                  <span className="text-lg font-bold text-white">{iqroProgress.page_surah}</span>
                 </div>
                 {iqroProgress.notes && (
-                  <div className="bg-white rounded-lg p-3 text-sm text-secondary border border-gray-100 italic">
+                  <div className="bg-zinc-900 rounded-xl p-3 text-xs text-zinc-300 border border-zinc-800 italic">
                     "{iqroProgress.notes}"
                   </div>
                 )}
               </div>
             ) : (
-              <p className="text-secondary text-center py-8">Belum ada catatan progres mengaji.</p>
+              <p className="text-zinc-500 text-center py-8 font-medium">Belum ada catatan progres mengaji.</p>
             )}
           </div>
           
-          <div className="pt-4 border-t border-slate-50 mt-4">
+          <div className="pt-4 border-t border-zinc-800 mt-4">
             <Link 
               href="/wali/laporan" 
-              className="flex items-center justify-center gap-1.5 w-full text-center py-2.5 bg-primary-container text-on-primary-container font-semibold rounded-xl text-sm hover:bg-primary-container/80 transition-colors"
+              className="flex items-center justify-center gap-1.5 w-full text-center py-3 bg-zinc-800 hover:bg-zinc-700 text-emerald-400 font-bold rounded-2xl text-xs border border-zinc-700 transition-colors"
             >
               <span className="material-symbols-outlined text-[16px]">visibility</span>
               Lihat Riwayat Belajar
@@ -367,11 +367,11 @@ export default async function WaliDashboard() {
       {/* Grid Row 2: Penilaian Sholat & Kehadiran */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Penilaian Sholat & Doa Card */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-emerald-50 flex flex-col justify-between">
+        <div className="bg-zinc-900/90 rounded-3xl p-6 shadow-xl border border-zinc-800 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">man_4</span>
+              <h3 className="text-lg font-extrabold text-white flex items-center gap-2">
+                <span className="material-symbols-outlined text-emerald-400">man_4</span>
                 Penilaian Sholat & Doa
               </h3>
             </div>
@@ -379,35 +379,35 @@ export default async function WaliDashboard() {
             <div className="space-y-3">
               {sholatProgress.length > 0 ? (
                 sholatProgress.slice(0, 3).map((item: any, idx: number) => (
-                  <div key={idx} className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-1">
+                  <div key={idx} className="p-3 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-1">
                     <div className="flex justify-between items-start">
                       <div>
-                        <p className="text-[10px] text-slate-400 font-semibold uppercase">{item.category}</p>
-                        <p className="text-sm font-bold text-slate-800 mt-0.5">{item.item_name}</p>
+                        <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">{item.category}</p>
+                        <p className="text-xs font-bold text-white mt-0.5">{item.item_name}</p>
                       </div>
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 ${
-                        item.status === 'SEMPURNA' ? 'bg-emerald-100 text-primary' :
-                        item.status === 'LANCAR' ? 'bg-blue-100 text-blue-700' :
-                        'bg-amber-100 text-amber-700'
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold shrink-0 border ${
+                        item.status === 'SEMPURNA' ? 'bg-emerald-950/80 text-emerald-400 border-emerald-500/30' :
+                        item.status === 'LANCAR' ? 'bg-teal-950/80 text-teal-400 border-teal-500/30' :
+                        'bg-amber-950/80 text-amber-400 border-amber-500/30'
                       }`}>
                         {item.status}
                       </span>
                     </div>
-                    {item.notes && <p className="text-xs text-secondary italic mt-1 text-slate-500">"{item.notes}"</p>}
+                    {item.notes && <p className="text-xs text-zinc-400 italic mt-1">"{item.notes}"</p>}
                   </div>
                 ))
               ) : (
-                <p className="text-xs text-secondary text-center py-8 bg-slate-50 rounded-xl border border-slate-100">
+                <p className="text-xs text-zinc-500 text-center py-8 bg-zinc-950 rounded-2xl border border-zinc-800 font-medium">
                   Belum ada catatan penilaian sholat & doa.
                 </p>
               )}
             </div>
           </div>
           
-          <div className="pt-4 border-t border-slate-50 mt-4">
+          <div className="pt-4 border-t border-zinc-800 mt-4">
             <Link 
               href="/wali/laporan" 
-              className="flex items-center justify-center gap-1.5 w-full text-center py-2.5 bg-primary-container text-on-primary-container font-semibold rounded-xl text-sm hover:bg-primary-container/80 transition-colors"
+              className="flex items-center justify-center gap-1.5 w-full text-center py-3 bg-zinc-800 hover:bg-zinc-700 text-emerald-400 font-bold rounded-2xl text-xs border border-zinc-700 transition-colors"
             >
               <span className="material-symbols-outlined text-[16px]">visibility</span>
               Lihat Detail Sholat & Doa
@@ -416,60 +416,60 @@ export default async function WaliDashboard() {
         </div>
 
         {/* Kehadiran (Absensi) Card */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-emerald-50 flex flex-col justify-between">
+        <div className="bg-zinc-900/90 rounded-3xl p-6 shadow-xl border border-zinc-800 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary">fact_check</span>
+              <h3 className="text-lg font-extrabold text-white flex items-center gap-2">
+                <span className="material-symbols-outlined text-emerald-400">fact_check</span>
                 Kehadiran (30 Hari Terakhir)
               </h3>
-              <span className="text-sm font-bold text-primary bg-primary/10 px-2 py-1 rounded-md">{attendanceRate}% Hadir</span>
+              <span className="text-xs font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-500/30 px-3 py-1 rounded-full">{attendanceRate}% Hadir</span>
             </div>
             
             <div className="grid grid-cols-4 gap-2 mb-6">
-              <div className="bg-primary-container/50 rounded-lg p-3 text-center border border-slate-200">
-                <p className="text-2xl font-bold text-primary">{hadirCount}</p>
-                <p className="text-[10px] uppercase font-bold text-primary mt-1">Hadir</p>
+              <div className="bg-emerald-950/80 rounded-2xl p-3 text-center border border-emerald-500/30">
+                <p className="text-2xl font-black text-emerald-400">{hadirCount}</p>
+                <p className="text-[10px] uppercase font-bold text-emerald-300 mt-1">Hadir</p>
               </div>
-              <div className="bg-blue-50 rounded-lg p-3 text-center border border-blue-100">
-                <p className="text-2xl font-bold text-blue-700">{izinCount}</p>
-                <p className="text-[10px] uppercase font-bold text-blue-600 mt-1">Izin</p>
+              <div className="bg-teal-950/80 rounded-2xl p-3 text-center border border-teal-500/30">
+                <p className="text-2xl font-black text-teal-400">{izinCount}</p>
+                <p className="text-[10px] uppercase font-bold text-teal-300 mt-1">Izin</p>
               </div>
-              <div className="bg-amber-50 rounded-lg p-3 text-center border border-amber-100">
-                <p className="text-2xl font-bold text-amber-700">{sakitCount}</p>
-                <p className="text-[10px] uppercase font-bold text-amber-600 mt-1">Sakit</p>
+              <div className="bg-amber-950/80 rounded-2xl p-3 text-center border border-amber-500/30">
+                <p className="text-2xl font-black text-amber-400">{sakitCount}</p>
+                <p className="text-[10px] uppercase font-bold text-amber-300 mt-1">Sakit</p>
               </div>
-              <div className="bg-red-50 rounded-lg p-3 text-center border border-red-100">
-                <p className="text-2xl font-bold text-red-700">{alpaCount}</p>
-                <p className="text-[10px] uppercase font-bold text-red-600 mt-1">Alpa</p>
+              <div className="bg-red-950/80 rounded-2xl p-3 text-center border border-red-500/30">
+                <p className="text-2xl font-black text-red-400">{alpaCount}</p>
+                <p className="text-[10px] uppercase font-bold text-red-300 mt-1">Alpa</p>
               </div>
             </div>
             
             <div>
-              <h4 className="text-sm font-medium text-slate-900 mb-2">Riwayat Absensi Terbaru</h4>
+              <h4 className="text-xs font-bold text-white mb-2">Riwayat Absensi Terbaru</h4>
               <div className="space-y-2">
                 {recentAttendance.slice(0, 3).map((att: any) => (
-                  <div key={att.id} className="flex justify-between items-center text-sm p-2 rounded-md hover:bg-gray-50">
-                    <span className="text-secondary">{formatDate(att.date)}</span>
-                    <span className={`px-2 py-0.5 rounded text-xs font-bold ${
-                      att.status === 'Hadir' ? 'bg-emerald-100 text-primary' :
-                      att.status === 'Izin' ? 'bg-blue-100 text-blue-700' :
-                      att.status === 'Sakit' ? 'bg-amber-100 text-amber-700' :
-                      'bg-red-100 text-red-700'
+                  <div key={att.id} className="flex justify-between items-center text-xs p-2.5 rounded-xl bg-zinc-950 border border-zinc-800">
+                    <span className="text-zinc-400 font-medium">{formatDate(att.date)}</span>
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
+                      att.status === 'Hadir' ? 'bg-emerald-950/80 text-emerald-400 border-emerald-500/30' :
+                      att.status === 'Izin' ? 'bg-teal-950/80 text-teal-400 border-teal-500/30' :
+                      att.status === 'Sakit' ? 'bg-amber-950/80 text-amber-400 border-amber-500/30' :
+                      'bg-red-950/80 text-red-400 border-red-500/30'
                     }`}>
                       {att.status}
                     </span>
                   </div>
                 ))}
-                {recentAttendance.length === 0 && <p className="text-xs text-secondary text-center">Belum ada riwayat.</p>}
+                {recentAttendance.length === 0 && <p className="text-xs text-zinc-500 text-center py-2">Belum ada riwayat.</p>}
               </div>
             </div>
           </div>
           
-          <div className="pt-4 border-t border-slate-50 mt-4">
+          <div className="pt-4 border-t border-zinc-800 mt-4">
             <Link 
               href="/wali/presensi" 
-              className="flex items-center justify-center gap-1.5 w-full text-center py-2.5 bg-primary-container text-on-primary-container font-semibold rounded-xl text-sm hover:bg-primary-container/80 transition-colors"
+              className="flex items-center justify-center gap-1.5 w-full text-center py-3 bg-zinc-800 hover:bg-zinc-700 text-emerald-400 font-bold rounded-2xl text-xs border border-zinc-700 transition-colors"
             >
               <span className="material-symbols-outlined text-[16px]">calendar_month</span>
               Detail Kalender Absensi
@@ -480,37 +480,37 @@ export default async function WaliDashboard() {
 
       {/* Grid Row 3: SPP Payments Card (Full Width on Desktop) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-emerald-50 md:col-span-2">
-          <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2 mb-4">
-            <span className="material-symbols-outlined text-primary">payments</span>
+        <div className="bg-zinc-900/90 rounded-3xl p-6 shadow-xl border border-zinc-800 md:col-span-2">
+          <h3 className="text-lg font-extrabold text-white flex items-center gap-2 mb-4">
+            <span className="material-symbols-outlined text-emerald-400">payments</span>
             Administrasi SPP (3 Bulan Terakhir)
           </h3>
           
           {payments.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {payments.map((payment: any) => (
-                <div key={payment.id} className="flex justify-between items-center p-4 border border-gray-100 rounded-xl bg-surface-container-low/50">
+                <div key={payment.id} className="flex justify-between items-center p-4 border border-zinc-800 rounded-2xl bg-zinc-950">
                   <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      payment.status === 'Lunas' ? 'bg-primary/10 text-primary' : 'bg-red-100 text-red-500'
+                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${
+                      payment.status === 'Lunas' ? 'bg-emerald-950 text-emerald-400 border border-emerald-500/30' : 'bg-red-950 text-red-400 border border-red-500/30'
                     }`}>
-                      <span className="material-symbols-outlined">
+                      <span className="material-symbols-outlined text-[20px]">
                         {payment.status === 'Lunas' ? 'check_circle' : 'pending'}
                       </span>
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-900 text-sm">
+                      <p className="font-bold text-white text-xs">
                         {payment.month} {payment.year}
                       </p>
-                      <p className="text-[10px] text-secondary">
+                      <p className="text-[10px] text-zinc-400 font-medium">
                         {payment.payment_type && payment.payment_type !== 'SPP' ? payment.payment_type : 'SPP Bulanan'}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-gray-900 text-sm">{formatRupiah(payment.amount)}</p>
+                    <p className="font-extrabold text-white text-xs">{formatRupiah(payment.amount)}</p>
                     <p className={`text-[10px] font-bold mt-0.5 ${
-                      payment.status === 'Lunas' ? 'text-primary' : 'text-error'
+                      payment.status === 'Lunas' ? 'text-emerald-400' : 'text-red-400'
                     }`}>
                       {payment.status.toUpperCase()}
                     </p>
@@ -519,7 +519,7 @@ export default async function WaliDashboard() {
               ))}
             </div>
           ) : (
-            <p className="text-secondary text-center py-8">Belum ada catatan SPP.</p>
+            <p className="text-zinc-500 text-center py-8 font-medium">Belum ada catatan SPP.</p>
           )}
         </div>
       </div>
@@ -529,7 +529,7 @@ export default async function WaliDashboard() {
         href={waLink}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-24 right-6 flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-white px-4 py-3 rounded-full shadow-lg transition-transform hover:scale-105 active:scale-95 z-40 text-sm font-semibold"
+        className="fixed bottom-24 right-6 flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-white px-5 py-3.5 rounded-full shadow-2xl shadow-emerald-500/30 transition-transform hover:scale-105 active:scale-95 z-40 text-xs font-extrabold"
       >
         <svg 
           className="w-5 h-5 fill-current" 
@@ -542,3 +542,4 @@ export default async function WaliDashboard() {
     </div>
   );
 }
+

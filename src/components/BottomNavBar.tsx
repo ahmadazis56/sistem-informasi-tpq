@@ -25,28 +25,40 @@ const BottomNavBar = ({ role = 'guru' }: { role?: string }) => {
   const navItems = role === 'guru' ? guruNavItems : waliNavItems;
 
   return (
-    <nav className="fixed bottom-0 left-0 w-full bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-gray-800 pb-safe z-50 shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
-      <div className="flex justify-around items-center h-20 max-w-md mx-auto">
+    <nav className="fixed bottom-3 left-1/2 -translate-x-1/2 w-[calc(100%-1.5rem)] max-w-lg z-50 bg-zinc-950/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-zinc-800 p-1.5 transition-all duration-300">
+      <div className="flex justify-around items-center h-14">
         {navItems.map((item) => {
-          const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href) && item.href !== '/wali');
+          const isActive =
+            pathname === item.href ||
+            (item.href !== '/' &&
+              pathname.startsWith(item.href) &&
+              item.href !== '/wali');
           return (
             <Link
               key={item.label}
               href={item.href}
-              className="flex flex-col items-center justify-center w-full h-full gap-1 active:scale-95 transition-transform"
+              className="relative flex flex-col items-center justify-center flex-1 h-full gap-0.5 active:scale-95 transition-all duration-200 group"
             >
               <div
-                className={`flex items-center justify-center w-16 h-8 rounded-full transition-colors ${
-                  isActive ? 'bg-primary-container text-on-primary-container' : 'text-on-surface-variant'
+                className={`relative flex items-center justify-center w-12 h-7 rounded-xl transition-all duration-300 ${
+                  isActive
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/30 scale-105'
+                    : 'text-zinc-400 group-hover:text-emerald-400'
                 }`}
               >
-                <span className={`material-symbols-outlined ${isActive ? 'filled' : ''}`}>
+                <span
+                  className={`material-symbols-outlined text-[20px] transition-transform duration-200 ${
+                    isActive ? 'scale-110' : ''
+                  }`}
+                >
                   {item.icon}
                 </span>
               </div>
               <span
-                className={`text-xs font-medium ${
-                  isActive ? 'text-on-surface' : 'text-on-surface-variant'
+                className={`text-[11px] font-semibold tracking-tight transition-colors duration-200 ${
+                  isActive
+                    ? 'text-emerald-400 font-bold'
+                    : 'text-zinc-400'
                 }`}
               >
                 {item.label}
@@ -60,3 +72,5 @@ const BottomNavBar = ({ role = 'guru' }: { role?: string }) => {
 };
 
 export default BottomNavBar;
+
+

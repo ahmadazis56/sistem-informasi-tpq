@@ -156,10 +156,10 @@ export default function AbsensiClient({
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">
+          <h2 className="text-2xl font-extrabold text-white tracking-tight">
             {activeTab === 'santri' ? 'Kehadiran Santri' : 'Kehadiran Ustaz'}
           </h2>
-          <p className="text-secondary text-sm">
+          <p className="text-zinc-400 text-sm font-medium">
             {activeTab === 'santri'
               ? 'Catat absensi santri per kelas.'
               : 'Catat absensi ustaz dan ustadzah TPQ.'}
@@ -171,59 +171,59 @@ export default function AbsensiClient({
             type="date" 
             value={date} 
             onChange={(e) => handleDateChange(e.target.value)}
-            className="px-4 py-2 border border-gray-200 text-slate-900 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none"
+            className="px-4 py-2.5 bg-zinc-950/90 border border-zinc-800 text-white rounded-2xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
           />
           {activeTab === 'santri' && (
             <select
               value={classFilter}
               onChange={(e) => handleClassFilterChange(e.target.value)}
-              className="px-4 py-2 border border-gray-200 text-slate-900 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none bg-white"
+              className="px-4 py-2.5 bg-zinc-950/90 border border-zinc-800 text-white rounded-2xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none cursor-pointer"
             >
-              <option value="Semua Kelas">Semua Kelas</option>
-              {classes.map(c => <option key={c} value={c}>{c}</option>)}
+              <option value="Semua Kelas" className="bg-zinc-950 text-white">Semua Kelas</option>
+              {classes.map(c => <option key={c} value={c} className="bg-zinc-950 text-white">{c}</option>)}
             </select>
           )}
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="inline-flex p-1 bg-slate-100 rounded-2xl border border-slate-200">
+      <div className="inline-flex p-1.5 bg-zinc-950 rounded-2xl border border-zinc-800">
         <button
           onClick={() => setActiveTab('santri')}
-          className={`px-6 py-2.5 text-sm font-semibold rounded-xl flex items-center gap-2 transition-all ${
+          className={`px-6 py-2.5 text-xs font-bold rounded-xl flex items-center gap-2 transition-all ${
             activeTab === 'santri'
-              ? 'bg-white text-primary shadow-sm'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25'
+              : 'text-zinc-400 hover:text-white'
           }`}
         >
-          <span className="material-symbols-outlined text-base">group</span>
+          <span className="material-symbols-outlined text-[18px]">group</span>
           Absensi Santri
         </button>
         <button
           onClick={() => setActiveTab('ustadz')}
-          className={`px-6 py-2.5 text-sm font-semibold rounded-xl flex items-center gap-2 transition-all ${
+          className={`px-6 py-2.5 text-xs font-bold rounded-xl flex items-center gap-2 transition-all ${
             activeTab === 'ustadz'
-              ? 'bg-white text-primary shadow-sm'
-              : 'text-slate-600 hover:text-slate-900'
+              ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25'
+              : 'text-zinc-400 hover:text-white'
           }`}
         >
-          <span className="material-symbols-outlined text-base">shield_person</span>
+          <span className="material-symbols-outlined text-[18px]">shield_person</span>
           Absensi Ustaz
         </button>
       </div>
 
       {/* Alert Message */}
       {message && (
-        <div className={`p-4 rounded-xl flex items-center gap-2 ${message.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-          <span className="material-symbols-outlined">{message.type === 'success' ? 'check_circle' : 'error'}</span>
+        <div className={`p-4 rounded-2xl flex items-center gap-2 text-xs font-semibold border ${message.type === 'success' ? 'bg-emerald-950/60 border-emerald-800 text-emerald-300' : 'bg-red-950/60 border-red-800 text-red-300'}`}>
+          <span className="material-symbols-outlined text-[20px]">{message.type === 'success' ? 'check_circle' : 'error'}</span>
           {message.text}
         </div>
       )}
 
       {/* Attendance List Card */}
-      <div className="bg-white rounded-2xl shadow-sm border border-emerald-50 overflow-hidden">
-        <div className="p-4 bg-surface-container-low border-b border-gray-100 flex justify-between items-center">
-          <h3 className="font-semibold text-slate-900">
+      <div className="bg-zinc-900/90 rounded-3xl shadow-xl border border-zinc-800 overflow-hidden">
+        <div className="p-4 bg-zinc-950/80 border-b border-zinc-800 flex justify-between items-center">
+          <h3 className="font-bold text-white text-sm">
             {activeTab === 'santri'
               ? `Daftar Santri (${attendance.length})`
               : `Daftar Ustaz (${teacherAttendance.length})`}
@@ -231,38 +231,38 @@ export default function AbsensiClient({
           <div className="flex gap-2">
             <button 
               onClick={handleExportExcel}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl flex items-center gap-2 font-medium transition-colors"
+              className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-emerald-400 px-4 py-2 rounded-2xl flex items-center gap-2 font-semibold text-xs transition-colors"
             >
-              <span className="material-symbols-outlined text-sm">download</span>
+              <span className="material-symbols-outlined text-[18px]">download</span>
               Export Excel
             </button>
             <button 
               onClick={activeTab === 'santri' ? handleSave : handleSaveTeacher}
               disabled={loading}
-              className="bg-primary hover:bg-primary-container text-white px-6 py-2 rounded-xl flex items-center gap-2 font-medium transition-colors disabled:opacity-50"
+              className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-5 py-2 rounded-2xl flex items-center gap-2 font-bold text-xs shadow-md transition-all disabled:opacity-50"
             >
-              <span className="material-symbols-outlined text-sm">save</span>
+              <span className="material-symbols-outlined text-[18px]">save</span>
               {loading ? 'Menyimpan...' : 'Simpan Absensi'}
             </button>
           </div>
         </div>
         
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-zinc-800/60">
           {activeTab === 'santri' ? (
             attendance.length === 0 ? (
-              <div className="p-8 text-center text-secondary">
+              <div className="p-8 text-center text-zinc-500 text-sm font-medium">
                 Tidak ada santri di kelas ini.
               </div>
             ) : (
               attendance.map(student => (
-                <div key={student.student_id} className="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 hover:bg-gray-50 transition-colors">
+                <div key={student.student_id} className="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 hover:bg-zinc-800/40 transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                    <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 text-white font-extrabold text-xs flex items-center justify-center shadow-md shadow-emerald-500/20">
                       {student.name.substring(0, 2).toUpperCase()}
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">{student.name}</p>
-                      <p className="text-xs text-secondary bg-gray-100 px-2 py-0.5 rounded-full inline-block mt-1">{student.class}</p>
+                      <p className="font-bold text-white text-sm">{student.name}</p>
+                      <p className="text-xs text-emerald-400 bg-emerald-950/80 border border-emerald-500/30 px-2.5 py-0.5 rounded-full inline-block mt-1 font-semibold">{student.class}</p>
                     </div>
                   </div>
                   
@@ -273,10 +273,10 @@ export default function AbsensiClient({
                         <button
                           key={status}
                           onClick={() => handleStatusChange(student.student_id, status)}
-                          className={`flex-1 md:flex-none px-4 py-2 rounded-xl border text-sm font-medium transition-all ${
+                          className={`flex-1 md:flex-none px-4 py-2 rounded-xl border text-xs font-bold transition-all ${
                             isActive 
                               ? statusColors[status] 
-                              : 'bg-white border-gray-200 text-slate-900 text-gray-600 hover:bg-gray-50'
+                              : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white'
                           }`}
                         >
                           {status}
@@ -289,19 +289,19 @@ export default function AbsensiClient({
             )
           ) : (
             teacherAttendance.length === 0 ? (
-              <div className="p-8 text-center text-secondary">
+              <div className="p-8 text-center text-zinc-500 text-sm font-medium">
                 Tidak ada ustaz terdaftar.
               </div>
             ) : (
               teacherAttendance.map(teacher => (
-                <div key={teacher.teacher_id} className="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 hover:bg-gray-50 transition-colors">
+                <div key={teacher.teacher_id} className="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 hover:bg-zinc-800/40 transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                    <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 text-white font-extrabold text-xs flex items-center justify-center shadow-md shadow-emerald-500/20">
                       {teacher.name.substring(0, 2).toUpperCase()}
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">{teacher.name}</p>
-                      <p className="text-xs text-secondary bg-gray-100 px-2 py-0.5 rounded-full inline-block mt-1">Ustaz/Guru</p>
+                      <p className="font-bold text-white text-sm">{teacher.name}</p>
+                      <p className="text-xs text-teal-400 bg-teal-950/80 border border-teal-500/30 px-2.5 py-0.5 rounded-full inline-block mt-1 font-semibold">Ustaz/Guru</p>
                     </div>
                   </div>
                   
@@ -312,10 +312,10 @@ export default function AbsensiClient({
                         <button
                           key={status}
                           onClick={() => handleTeacherStatusChange(teacher.teacher_id, status)}
-                          className={`flex-1 md:flex-none px-4 py-2 rounded-xl border text-sm font-medium transition-all ${
+                          className={`flex-1 md:flex-none px-4 py-2 rounded-xl border text-xs font-bold transition-all ${
                             isActive 
                               ? statusColors[status] 
-                              : 'bg-white border-gray-200 text-slate-900 text-gray-600 hover:bg-gray-50'
+                              : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:border-zinc-700 hover:text-white'
                           }`}
                         >
                           {status}
@@ -332,3 +332,4 @@ export default function AbsensiClient({
     </div>
   );
 }
+

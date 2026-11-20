@@ -91,62 +91,76 @@ export default function SearchableSelect({
       
       <div 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-3 border border-gray-200 text-slate-900 rounded-xl focus-within:ring-2 focus-within:ring-primary focus-within:border-primary outline-none bg-white flex justify-between items-center cursor-pointer min-h-[50px] transition-all"
+        className="w-full px-4 py-3 border border-zinc-800 text-white rounded-xl focus-within:ring-2 focus-within:ring-emerald-500 focus-within:border-emerald-500 outline-none bg-zinc-950/90 flex justify-between items-center cursor-pointer min-h-[50px] transition-all"
       >
         <div className="flex-grow pr-2">
           {isOpen ? (
             <input
               type="text"
-              className="w-full outline-none text-slate-900 bg-transparent placeholder-gray-400 border-none p-0 focus:ring-0"
-              placeholder="Ketik untuk mencari..."
+              className="w-full outline-none text-white bg-transparent placeholder-zinc-500 border-none p-0 focus:ring-0 text-sm"
+              placeholder="Ketik untuk mencari nama..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onClick={(e) => e.stopPropagation()}
               autoFocus
+              onClick={(e) => e.stopPropagation()}
             />
           ) : (
-            <span className={selectedLabel ? 'text-slate-900' : 'text-gray-400'}>
+            <span className={`text-sm ${selectedLabel ? 'text-white font-medium' : 'text-zinc-500'}`}>
               {selectedLabel || placeholder}
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1 text-gray-400">
-          {selectedValue && (
-            <button 
-              type="button" 
-              onClick={handleClear} 
-              className="hover:text-gray-600 p-0.5 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+
+        <div className="flex items-center gap-1 shrink-0 text-zinc-400">
+          {selectedLabel && (
+            <button
+              type="button"
+              onClick={handleClear}
+              className="hover:text-red-400 p-1 rounded-full hover:bg-zinc-800 transition-colors"
             >
               <span className="material-symbols-outlined text-[18px]">close</span>
             </button>
           )}
-          <span className="material-symbols-outlined text-[20px] transition-transform duration-200" style={{ transform: isOpen ? 'rotate(180deg)' : 'none' }}>
-            keyboard_arrow_down
+          <span className="material-symbols-outlined text-[20px] transition-transform duration-200">
+            {isOpen ? 'expand_less' : 'expand_more'}
           </span>
         </div>
       </div>
 
+      {/* Dropdown menu */}
       {isOpen && (
-        <div className="absolute z-50 w-full mt-2 bg-white border border-gray-150 rounded-xl shadow-lg max-h-60 overflow-y-auto divide-y divide-gray-50 transition-all">
+        <div className="absolute z-50 left-0 right-0 mt-2 bg-zinc-950 border border-zinc-800 rounded-xl shadow-2xl max-h-60 overflow-y-auto divide-y divide-zinc-800/60">
           {filteredOptions.length === 0 ? (
-            <div className="px-4 py-3 text-sm text-gray-400 text-center">
-              Tidak ada hasil ditemukan
+            <div className="px-4 py-3 text-sm text-zinc-500 text-center">
+              Santri tidak ditemukan
             </div>
           ) : (
-            filteredOptions.map((option) => (
-              <div
-                key={option.id}
-                onClick={() => handleSelect(option)}
-                className={`px-4 py-3 text-sm text-slate-900 hover:bg-emerald-50 hover:text-primary cursor-pointer transition-colors flex justify-between items-center ${String(option.id) === String(selectedValue) ? 'bg-emerald-50/50 text-primary font-semibold' : ''}`}
-              >
-                <span>{option.name}</span>
-                {option.class && (
-                  <span className="text-xs text-secondary bg-slate-100 px-2 py-0.5 rounded-md font-normal">
-                    {option.class}
-                  </span>
-                )}
-              </div>
-            ))
+            filteredOptions.map((option) => {
+              const isSelected = String(option.id) === String(selectedValue);
+              return (
+                <div
+                  key={option.id}
+                  onClick={() => handleSelect(option)}
+                  className={`px-4 py-3 text-sm cursor-pointer flex justify-between items-center transition-colors ${
+                    isSelected 
+                      ? 'bg-emerald-500/10 text-emerald-400 font-semibold' 
+                      : 'hover:bg-zinc-900 text-zinc-200'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-white">{option.name}</span>
+                    {option.class && (
+                      <span className="text-xs bg-zinc-900 text-emerald-400 px-2 py-0.5 rounded border border-zinc-800 font-medium">
+                        {option.class}
+                      </span>
+                    )}
+                  </div>
+                  {isSelected && (
+                    <span className="material-symbols-outlined text-emerald-400 text-[18px]">check</span>
+                  )}
+                </div>
+              );
+            })
           )}
         </div>
       )}

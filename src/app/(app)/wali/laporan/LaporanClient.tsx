@@ -48,23 +48,23 @@ export default function LaporanClient({ studentName, iqroHistory, sholatHistory,
   return (
     <div className="max-w-md mx-auto space-y-6 pb-12">
       {/* Breadcrumbs */}
-      <nav className="text-xs text-slate-500 flex gap-1 items-center px-1">
-        <Link href="/wali" className="hover:text-primary transition-colors">Dashboard</Link>
-        <span className="material-symbols-outlined text-[12px] text-slate-400">chevron_right</span>
-        <span className="text-slate-700 font-medium">Laporan Progres</span>
+      <nav className="text-xs text-zinc-400 flex gap-1 items-center px-1 font-medium">
+        <Link href="/wali" className="hover:text-emerald-400 transition-colors">Dashboard</Link>
+        <span className="material-symbols-outlined text-[12px] text-zinc-600">chevron_right</span>
+        <span className="text-white font-bold">Laporan Progres</span>
       </nav>
 
       <div>
-        <h2 className="text-2xl font-bold text-slate-900">Rapor Progres Santri</h2>
-        <p className="text-secondary text-sm">Laporan pencapaian belajar untuk <strong>{studentName}</strong>.</p>
+        <h2 className="text-2xl font-extrabold text-white tracking-tight">Rapor Progres Santri</h2>
+        <p className="text-zinc-400 text-sm font-medium">Laporan pencapaian belajar untuk <strong className="text-emerald-400">{studentName}</strong>.</p>
       </div>
 
       {/* Tabs */}
-      <div className="flex bg-white rounded-xl shadow-sm p-1 border border-emerald-50">
+      <div className="flex bg-zinc-950 rounded-2xl shadow-xl p-1.5 border border-zinc-800">
         <button
           onClick={() => setActiveTab('hafalan')}
-          className={`flex-1 py-3 text-xs font-bold rounded-lg transition-all flex flex-col items-center justify-center gap-1 ${
-            activeTab === 'hafalan' ? 'bg-primary text-white shadow-sm' : 'text-slate-500 hover:bg-slate-50'
+          className={`flex-1 py-3 text-xs font-bold rounded-xl transition-all flex flex-col items-center justify-center gap-1 ${
+            activeTab === 'hafalan' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25' : 'text-zinc-400 hover:text-white'
           }`}
         >
           <span className="material-symbols-outlined text-[20px]">menu_book</span>
@@ -72,8 +72,8 @@ export default function LaporanClient({ studentName, iqroHistory, sholatHistory,
         </button>
         <button
           onClick={() => setActiveTab('iqro')}
-          className={`flex-1 py-3 text-xs font-bold rounded-lg transition-all flex flex-col items-center justify-center gap-1 ${
-            activeTab === 'iqro' ? 'bg-primary text-white shadow-sm' : 'text-slate-500 hover:bg-slate-50'
+          className={`flex-1 py-3 text-xs font-bold rounded-xl transition-all flex flex-col items-center justify-center gap-1 ${
+            activeTab === 'iqro' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25' : 'text-zinc-400 hover:text-white'
           }`}
         >
           <span className="material-symbols-outlined text-[20px]">auto_stories</span>
@@ -81,8 +81,8 @@ export default function LaporanClient({ studentName, iqroHistory, sholatHistory,
         </button>
         <button
           onClick={() => setActiveTab('sholat')}
-          className={`flex-1 py-3 text-xs font-bold rounded-lg transition-all flex flex-col items-center justify-center gap-1 ${
-            activeTab === 'sholat' ? 'bg-primary text-white shadow-sm' : 'text-slate-500 hover:bg-slate-50'
+          className={`flex-1 py-3 text-xs font-bold rounded-xl transition-all flex flex-col items-center justify-center gap-1 ${
+            activeTab === 'sholat' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25' : 'text-zinc-400 hover:text-white'
           }`}
         >
           <span className="material-symbols-outlined text-[20px]">man_4</span>
@@ -94,25 +94,25 @@ export default function LaporanClient({ studentName, iqroHistory, sholatHistory,
       {activeTab === 'hafalan' && (
         <div className="space-y-6">
           {/* Summary Banner */}
-          <div className="bg-gradient-to-br from-primary/10 to-primary-container/20 border border-primary/20 rounded-2xl p-5 shadow-sm">
-            <h3 className="font-bold text-primary-container-low text-sm flex items-center gap-1.5 mb-2">
+          <div className="bg-gradient-to-br from-emerald-950/80 via-zinc-900 to-black border border-emerald-500/30 rounded-3xl p-5 shadow-xl">
+            <h3 className="font-bold text-emerald-400 text-xs flex items-center gap-1.5 mb-2 uppercase tracking-wider">
               <span className="material-symbols-outlined text-[18px]">verified</span>
               Pencapaian Hafalan Juz 30
             </h3>
             <div className="flex justify-between items-baseline mb-2">
-              <span className="text-3xl font-black text-primary">{totalMemorized} <span className="text-sm font-semibold text-slate-500">dari {surahsJuz30.length} surah</span></span>
-              <span className="text-sm font-bold text-primary">{percentage}% Selesai</span>
+              <span className="text-3xl font-black text-white">{totalMemorized} <span className="text-sm font-semibold text-zinc-400">dari {surahsJuz30.length} surah</span></span>
+              <span className="text-sm font-bold text-emerald-400">{percentage}% Selesai</span>
             </div>
-            <div className="w-full bg-slate-200/60 rounded-full h-2.5">
-              <div className="bg-primary h-2.5 rounded-full" style={{ width: `${percentage}%` }}></div>
+            <div className="w-full bg-zinc-950 rounded-full h-2.5 border border-zinc-800">
+              <div className="bg-gradient-to-r from-emerald-500 to-teal-500 h-2.5 rounded-full" style={{ width: `${percentage}%` }}></div>
             </div>
           </div>
 
           {/* Surah List */}
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-emerald-50">
+          <div className="bg-zinc-900/90 rounded-3xl p-4 shadow-xl border border-zinc-800">
             <div className="flex justify-between items-center mb-4 px-1">
-              <h4 className="text-sm font-bold text-slate-800">Checklist Hafalan Surah</h4>
-              <span className="text-[10px] text-slate-400 italic">Klik surah untuk detail</span>
+              <h4 className="text-sm font-bold text-white">Checklist Hafalan Surah</h4>
+              <span className="text-[10px] text-zinc-400 italic">Klik surah untuk detail</span>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
@@ -127,13 +127,13 @@ export default function LaporanClient({ studentName, iqroHistory, sholatHistory,
                 const getStatusStyles = () => {
                   switch (status) {
                     case 'SEMPURNA':
-                      return 'bg-emerald-50 border-emerald-100 text-primary';
+                      return 'bg-emerald-950/80 border-emerald-500/30 text-emerald-400 hover:bg-emerald-900/60';
                     case 'LANCAR':
-                      return 'bg-blue-50 border-blue-100 text-blue-700';
+                      return 'bg-teal-950/80 border-teal-500/30 text-teal-400 hover:bg-teal-900/60';
                     case 'BELUM LANCAR':
-                      return 'bg-amber-50 border-amber-100 text-amber-700';
+                      return 'bg-amber-950/80 border-amber-500/30 text-amber-400 hover:bg-amber-900/60';
                     default:
-                      return 'bg-slate-50 border-slate-100 text-slate-400';
+                      return 'bg-zinc-950 border-zinc-800 text-zinc-500 hover:bg-zinc-900';
                   }
                 };
 
@@ -142,7 +142,7 @@ export default function LaporanClient({ studentName, iqroHistory, sholatHistory,
                     <button
                       onClick={() => setExpandedSurah(isExpanded ? null : surah)}
                       type="button"
-                      className={`w-full flex justify-between items-center px-4 py-3 rounded-xl border text-sm text-left transition-colors cursor-pointer ${getStatusStyles()}`}
+                      className={`w-full flex justify-between items-center px-4 py-3 rounded-2xl border text-xs text-left transition-colors cursor-pointer ${getStatusStyles()}`}
                     >
                       <span className="font-bold flex items-center gap-2">
                         <span className="material-symbols-outlined text-[16px]">
@@ -159,20 +159,20 @@ export default function LaporanClient({ studentName, iqroHistory, sholatHistory,
                     
                     {/* Expandable details panel */}
                     {isExpanded && (
-                      <div className="mt-1 p-4 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-600 space-y-2 animate-fadeIn mx-1">
+                      <div className="mt-1 p-4 rounded-2xl bg-zinc-950 border border-zinc-800 text-xs text-zinc-300 space-y-2 mx-1">
                         <div className="flex justify-between">
-                          <span>Status Belajar:</span>
-                          <strong className="font-semibold text-slate-800">{status === 'BELUM' ? 'Belum Hafal' : status}</strong>
+                          <span className="text-zinc-400">Status Belajar:</span>
+                          <strong className="font-semibold text-white">{status === 'BELUM' ? 'Belum Hafal' : status}</strong>
                         </div>
                         {record?.created_at && (
                           <div className="flex justify-between">
-                            <span>Diupdate Pada:</span>
-                            <strong className="font-semibold text-slate-800">{formatDate(record.created_at)}</strong>
+                            <span className="text-zinc-400">Diupdate Pada:</span>
+                            <strong className="font-semibold text-white">{formatDate(record.created_at)}</strong>
                           </div>
                         )}
                         <div>
-                          <span>Catatan Pengajar:</span>
-                          <p className="mt-1 italic text-slate-500 bg-white p-2 rounded border border-slate-100">
+                          <span className="text-zinc-400">Catatan Pengajar:</span>
+                          <p className="mt-1 italic text-zinc-300 bg-zinc-900 p-2.5 rounded-xl border border-zinc-800">
                             {record?.notes ? `"${record.notes}"` : 'Tidak ada catatan khusus.'}
                           </p>
                         </div>
@@ -188,31 +188,31 @@ export default function LaporanClient({ studentName, iqroHistory, sholatHistory,
 
       {/* Iqro / Quran Tab */}
       {activeTab === 'iqro' && (
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-emerald-50">
-          <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2 mb-6">
-            <span className="material-symbols-outlined text-primary text-[22px]">history</span>
+        <div className="bg-zinc-900/90 rounded-3xl p-6 shadow-xl border border-zinc-800">
+          <h3 className="text-lg font-extrabold text-white flex items-center gap-2 mb-6">
+            <span className="material-symbols-outlined text-emerald-400 text-[22px]">history</span>
             Riwayat Pembelajaran Mengaji
           </h3>
 
           {iqroHistory.length === 0 ? (
-            <p className="text-secondary text-sm text-center py-8">Belum ada riwayat perkembangan mengaji.</p>
+            <p className="text-zinc-500 text-sm text-center py-8 font-medium">Belum ada riwayat perkembangan mengaji.</p>
           ) : (
-            <div className="relative border-l-2 border-primary/20 pl-4 ml-2 space-y-6">
+            <div className="relative border-l-2 border-emerald-500/30 pl-4 ml-2 space-y-6">
               {iqroHistory.map((item: any, idx: number) => (
                 <div key={item.id || idx} className="relative">
                   {/* Timeline dot */}
-                  <span className="absolute -left-[25px] top-1.5 w-3.5 h-3.5 bg-primary border-2 border-white rounded-full shadow-sm"></span>
+                  <span className="absolute -left-[23px] top-1.5 w-3 h-3 bg-emerald-500 rounded-full ring-4 ring-zinc-900"></span>
                   
-                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-1">
+                  <div className="p-4 rounded-2xl bg-zinc-950 border border-zinc-800 space-y-1">
                     <div className="flex justify-between items-start">
-                      <span className="text-[10px] text-slate-400 font-medium">{formatDate(item.created_at)}</span>
-                      <span className="bg-primary-container text-on-primary-container text-[10px] font-bold px-2 py-0.5 rounded border border-primary/10">
+                      <span className="text-[10px] text-zinc-400 font-medium">{formatDate(item.created_at)}</span>
+                      <span className="bg-emerald-950/80 text-emerald-400 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-500/30">
                         {item.level}
                       </span>
                     </div>
-                    <h4 className="font-bold text-slate-900 text-sm">{item.page_surah}</h4>
+                    <h4 className="font-bold text-white text-sm">{item.page_surah}</h4>
                     {item.notes && (
-                      <p className="text-xs text-secondary italic mt-1.5 text-slate-500 bg-white p-2.5 rounded border border-slate-100">
+                      <p className="text-xs text-zinc-400 italic mt-1.5 bg-zinc-900 p-2.5 rounded-xl border border-zinc-800">
                         "{item.notes}"
                       </p>
                     )}
@@ -228,32 +228,32 @@ export default function LaporanClient({ studentName, iqroHistory, sholatHistory,
       {activeTab === 'sholat' && (
         <div className="space-y-4">
           {sholatHistory.length === 0 ? (
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-emerald-50 text-center py-8">
-              <p className="text-secondary text-sm">Belum ada riwayat penilaian sholat.</p>
+            <div className="bg-zinc-900/90 rounded-3xl p-6 shadow-xl border border-zinc-800 text-center py-8">
+              <p className="text-zinc-500 text-sm font-medium">Belum ada riwayat penilaian sholat.</p>
             </div>
           ) : (
             Object.entries(sholatGrouped).map(([category, items]: [string, any]) => (
-              <div key={category} className="bg-white rounded-2xl p-5 shadow-sm border border-emerald-50">
-                <h4 className="font-bold text-slate-900 text-sm mb-3 flex items-center gap-1.5 pb-2 border-b border-slate-100">
-                  <span className="material-symbols-outlined text-primary text-[18px]">bookmark</span>
+              <div key={category} className="bg-zinc-900/90 rounded-3xl p-5 shadow-xl border border-zinc-800">
+                <h4 className="font-bold text-white text-sm mb-3 flex items-center gap-1.5 pb-2 border-b border-zinc-800">
+                  <span className="material-symbols-outlined text-emerald-400 text-[18px]">bookmark</span>
                   {category}
                 </h4>
 
                 <div className="space-y-3">
                   {items.map((item: any) => (
-                    <div key={item.id} className="p-3 bg-slate-50 border border-slate-100 rounded-xl space-y-1.5">
+                    <div key={item.id} className="p-3.5 bg-zinc-950 border border-zinc-800 rounded-2xl space-y-1.5">
                       <div className="flex justify-between items-start">
-                        <span className="text-sm font-bold text-slate-800">{item.item_name}</span>
-                        <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider ${
-                          item.status === 'SEMPURNA' ? 'bg-emerald-100 text-primary border border-emerald-200' :
-                          item.status === 'LANCAR' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
-                          'bg-amber-100 text-amber-700 border border-amber-200'
+                        <span className="text-xs font-bold text-white">{item.item_name}</span>
+                        <span className={`text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider border ${
+                          item.status === 'SEMPURNA' ? 'bg-emerald-950/80 text-emerald-400 border-emerald-500/30' :
+                          item.status === 'LANCAR' ? 'bg-teal-950/80 text-teal-400 border-teal-500/30' :
+                          'bg-amber-950/80 text-amber-400 border-amber-500/30'
                         }`}>
                           {item.status}
                         </span>
                       </div>
                       {item.notes && (
-                        <p className="text-xs text-secondary italic text-slate-500 bg-white p-2 rounded border border-slate-100">
+                        <p className="text-xs text-zinc-400 italic bg-zinc-900 p-2.5 rounded-xl border border-zinc-800">
                           "{item.notes}"
                         </p>
                       )}
@@ -263,6 +263,7 @@ export default function LaporanClient({ studentName, iqroHistory, sholatHistory,
               </div>
             ))
           )}
+
         </div>
       )}
     </div>

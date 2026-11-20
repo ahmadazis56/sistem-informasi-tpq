@@ -46,3 +46,15 @@ next-env.d.ts
 
 .vercel
 .env*
+
+
+# Temporary & non-essential project folders
+/hijaiyah/
+/backup_old/
+/ui/
+/image*.png
+/*.jpeg
+/template_text.txt
+/ANALISIS EVALUASI KUALITAS*.pdf
+generate_report.py
+generate_postman.py

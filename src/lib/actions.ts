@@ -409,6 +409,77 @@ export async function togglePaymentStatus(
   }
 }
 
+export async function batchTogglePaymentStatus(
+  studentIds: number[],
+  month: string,
+  year: number,
+  paymentType: string,
+  newStatus: 'Lunas' | 'Belum Bayar'
+) {
+  if (!studentIds || studentIds.length === 0 || !month || !year || !paymentType) {
+    return { error: 'Pilih setidaknya satu santri.' };
+  }
+
+  try {
+    for (const studentId of studentIds) {
+      // Check sibling count to determine proper required amount
+      const studentInfo = await sql`SELECT wali_santri_id FROM students WHERE id = ${studentId}`;
+      const waliId = studentInfo.rows[0]?.wali_santri_id;
+      let siblingCount = 1;
+      if (waliId) {
+        const siblings = await sql`SELECT COUNT(*) as count FROM students WHERE wali_santri_id = ${waliId}`;
+        siblingCount = Number(siblings.rows[0]?.count || 1);
+      }
+      const finalAmount = siblingCount >= 3 ? 75000 : 50000;
+
+      const existing = await sql`
+        SELECT id FROM spp_payments 
+        WHERE student_id = ${studentId} AND month = ${month} AND year = ${year} AND payment_type = ${paymentType}
+      `;
+
+      if (newStatus === 'Lunas') {
+        if (existing.rows.length > 0) {
+          await sql`
+            UPDATE spp_payments 
+            SET amount = ${finalAmount}, status = 'Lunas', payment_date = NOW()
+            WHERE student_id = ${studentId} AND month = ${month} AND year = ${year} AND payment_type = ${paymentType}
+          `;
+        } else {
+          await sql`
+            INSERT INTO spp_payments (student_id, month, year, amount, payment_date, status, payment_type)
+            VALUES (${studentId}, ${month}, ${year}, ${finalAmount}, NOW(), 'Lunas', ${paymentType})
+          `;
+        }
+      } else {
+        if (waliId) {
+          const siblingsResult = await sql`SELECT id FROM students WHERE wali_santri_id = ${waliId}`;
+          const siblingIds = siblingsResult.rows.map((r: any) => r.id);
+          
+          for (const sId of siblingIds) {
+            await sql`
+              DELETE FROM spp_payments 
+              WHERE student_id = ${sId} AND month = ${month} AND year = ${year} AND payment_type = ${paymentType}
+            `;
+          }
+        } else {
+          await sql`
+            DELETE FROM spp_payments 
+            WHERE student_id = ${studentId} AND month = ${month} AND year = ${year} AND payment_type = ${paymentType}
+          `;
+        }
+      }
+    }
+
+    revalidatePath('/bayar');
+    revalidatePath('/');
+    return { success: true, count: studentIds.length };
+  } catch (error: any) {
+    console.error('Error in batchTogglePaymentStatus:', error);
+    return { error: error.message || 'Gagal memproses pembayaran massal.' };
+  }
+}
+
+
 
 export async function getRecentPayments(limit: number = 10) {
   try {

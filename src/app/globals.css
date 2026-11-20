@@ -1,44 +1,40 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #0b9444;
-  --color-primary-container: #e2f5e9;
+  --color-primary: #10b981;
+  --color-primary-hover: #059669;
+  --color-primary-container: #064e3b;
   --color-on-primary: #ffffff;
-  --color-on-primary-container: #054820;
+  --color-on-primary-container: #a7f3d0;
   
-  --color-secondary: #07632d;
-  --color-secondary-container: #f0fbf4;
+  --color-secondary: #14b8a6;
+  --color-secondary-container: #134e4a;
   --color-on-secondary: #ffffff;
   
-  --color-surface: #f8fafc;
-  --color-surface-container-low: #f1f5f9;
-  --color-surface-container: #e2e8f0;
-  --color-on-surface: #0f172a;
-  --color-surface-variant: #e2e8f0;
-  --color-on-surface-variant: #334155;
+  --color-[#09090b]: #09090b;
+  --color-surface: #09090b;
+  --color-surface-container-low: #18181b;
+  --color-surface-container: #27272a;
+  --color-on-surface: #f4f4f5;
+  --color-surface-variant: #27272a;
+  --color-on-surface-variant: #a1a1aa;
   
-  --color-error: #dc2626;
-  --color-error-container: #fee2e2;
+  --color-error: #ef4444;
+  --color-error-container: #450a0a;
   --color-on-error: #ffffff;
   
-  --font-sans: var(--font-plus-jakarta-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-sans: var(--font-plus-jakarta-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-:root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #181d1a;
-    --foreground: #f7faf5;
-  }
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: #09090b;
+  color: #f4f4f5;
+  overflow-x: hidden;
 }
 
 /* Material Symbols support */
@@ -56,3 +52,66 @@ body {
   direction: ltr;
   -webkit-font-smoothing: antialiased;
 }
+
+/* Cyberpunk Grid Background from d:\game\portofolio */
+.cyber-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+/* Cyberpunk & Portfolio Dark Card Styling */
+.glass-card {
+  background: rgba(18, 18, 22, 0.92) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(39, 39, 42, 0.8) !important;
+  color: #f4f4f5 !important;
+}
+
+.glass-header {
+  background: rgba(9, 9, 11, 0.9) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(39, 39, 42, 0.8) !important;
+}
+
+.cyber-glow-emerald {
+  box-shadow: 0 0 35px -5px rgba(16, 185, 129, 0.3);
+}
+
+.cyber-glow-teal {
+  box-shadow: 0 0 35px -5px rgba(20, 184, 166, 0.3);
+}
+
+.cyber-glow-blue {
+  box-shadow: 0 0 35px -5px rgba(59, 130, 246, 0.3);
+}
+
+.text-gradient-emerald {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 50%, #059669 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom Scrollbar from d:\game\portofolio */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #09090b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
+
+
